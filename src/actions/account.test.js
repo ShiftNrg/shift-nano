@@ -9,6 +9,7 @@ import * as accountApi from '../utils/api/account';
 import * as delegateApi from '../utils/api/delegate';
 import Fees from '../constants/fees';
 import { toRawLsk } from '../utils/lsk';
+import transactionTypes from '../constants/transactionTypes';
 
 describe('actions: account', () => {
   describe('accountUpdated', () => {
@@ -62,14 +63,14 @@ describe('actions: account', () => {
     });
 
     it('should dispatch transactionAdded action if resolved', () => {
-      accountApiMock.returnsPromise().resolves({ transactionId: '15626650747375562521' });
+      accountApiMock.returnsPromise().resolves({ id: '15626650747375562521' });
       const expectedAction = {
         id: '15626650747375562521',
         senderPublicKey: 'test_public-key',
         senderId: 'test_address',
         amount: 0,
         fee: Fees.setSecondPassphrase,
-        type: 1,
+        type: transactionTypes.setSecondPassphrase,
       };
 
       actionFunction(dispatch);
@@ -121,7 +122,7 @@ describe('actions: account', () => {
     });
 
     it('should dispatch transactionAdded action if resolved', () => {
-      delegateApiMock.returnsPromise().resolves({ transactionId: '15626650747375562521' });
+      delegateApiMock.returnsPromise().resolves({ id: '15626650747375562521' });
       const expectedAction = {
         id: '15626650747375562521',
         senderPublicKey: 'test_public-key',
@@ -129,7 +130,7 @@ describe('actions: account', () => {
         username: data.username,
         amount: 0,
         fee: Fees.registerDelegate,
-        type: 2,
+        type: transactionTypes.registerDelegate,
       };
 
       actionFunction(dispatch);
@@ -183,7 +184,7 @@ describe('actions: account', () => {
     });
 
     it('should dispatch transactionAdded action if resolved', () => {
-      accountApiMock.returnsPromise().resolves({ transactionId: '15626650747375562521' });
+      accountApiMock.returnsPromise().resolves({ id: '15626650747375562521' });
       const expectedAction = {
         id: '15626650747375562521',
         senderPublicKey: 'test_public-key',
@@ -191,7 +192,7 @@ describe('actions: account', () => {
         recipientId: data.recipientId,
         amount: toRawLsk(data.amount),
         fee: Fees.send,
-        type: 0,
+        type: transactionTypes.send,
       };
 
       actionFunction(dispatch);

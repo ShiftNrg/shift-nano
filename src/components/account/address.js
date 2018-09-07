@@ -1,10 +1,21 @@
 import React from 'react';
 import grid from 'flexboxgrid/dist/flexboxgrid.css';
+
+import { TooltipWrapper } from '../timestamp';
 import styles from './account.css';
 
+const getStatusTooltip = (props) => {
+  if (props.secondPublicKey) {
+    return props.t('This account is protected by a second passphrase');
+  } else if (props.passphrase) {
+    return props.t('Passphrase of the account is saved till the end of the session.');
+  }
+  return props.t('Passphrase of the account will be required to perform any transaction.');
+};
+
 const Address = (props) => {
-  const title = props.isDelegate ? 'Delegate' : 'Address';
-  const content = props.isDelegate ?
+  const title = props.isDelegate ? props.t('Delegate') : props.t('Address');
+  const content = (props.isDelegate && props.delegate) ?
     (<div>
       <p className="inner primary delegate-name">
         {props.delegate.username}
@@ -26,6 +37,11 @@ const Address = (props) => {
         <div className={`${grid['col-sm-12']} ${grid['col-xs-8']}`}>
           <div className={styles['value-wrapper']}>
             {content}
+            <span className="status">
+              <TooltipWrapper tooltip={getStatusTooltip(props)}>
+                <i className="material-icons">{props.passphrase && !props.secondPublicKey ? 'lock_open' : 'lock'}</i>
+              </TooltipWrapper>
+            </span>
           </div>
         </div>
       </div>

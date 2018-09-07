@@ -9,7 +9,7 @@
 }
 
 :global .CircularProgressbar .CircularProgressbar-path {
-  stroke: rgb(28, 189, 200);
+  stroke: rgb(2, 136, 209);
   transition: stroke-dashoffset 500ms ease 0ms;
 }
 

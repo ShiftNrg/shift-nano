@@ -1,9 +1,9 @@
 import { loadingStarted, loadingFinished } from '../../utils/loading';
 
-/* eslint-disable  */
-export const requestToActivePeer = (activePeer, path, urlParams) =>
+const requestToActivePeer = (activePeer, path, urlParams) =>
   new Promise((resolve, reject) => {
     loadingStarted(path);
+    // console.log('Before requestToActivePeer', activePeer);
     activePeer.sendRequest(path, urlParams, (data) => {
       if (data.success) {
         resolve(data);
@@ -13,4 +13,8 @@ export const requestToActivePeer = (activePeer, path, urlParams) =>
       loadingFinished(path);
     });
   });
-/* eslint-enable */
+
+
+const getNethash = activePeer => (requestToActivePeer(activePeer, 'blocks/getNethash'));
+
+export { requestToActivePeer, getNethash };

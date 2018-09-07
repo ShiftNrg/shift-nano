@@ -1,3 +1,4 @@
+import i18next from 'i18next';
 import actionTypes from '../constants/actions';
 import { setSecondPassphrase, send } from '../utils/api/account';
 import { registerDelegate } from '../utils/api/delegate';
@@ -5,6 +6,8 @@ import { transactionAdded } from './transactions';
 import { errorAlertDialogDisplayed } from './dialog';
 import Fees from '../constants/fees';
 import { toRawLsk } from '../utils/lsk';
+import transactionTypes from '../constants/transactionTypes';
+import { loadingStarted, loadingFinished } from '../utils/loading';
 
 /**
  * Trigger this action to update the account object
@@ -40,71 +43,90 @@ export const accountLoggedIn = data => ({
   data,
 });
 
+export const passphraseUsed = data => ({
+  type: actionTypes.passphraseUsed,
+  data,
+});
+
 /**
  *
  */
 export const secondPassphraseRegistered = ({ activePeer, secondPassphrase, account }) =>
   (dispatch) => {
+    loadingStarted('secondPassphraseRegistered');
     setSecondPassphrase(activePeer, secondPassphrase, account.publicKey, account.passphrase)
       .then((data) => {
+        loadingFinished('secondPassphraseRegistered');
         dispatch(transactionAdded({
-          id: data.transactionId,
+          id: data.id,
           senderPublicKey: account.publicKey,
           senderId: account.address,
           amount: 0,
           fee: Fees.setSecondPassphrase,
-          type: 1,
+          type: transactionTypes.setSecondPassphrase,
         }));
       }).catch((error) => {
-        const text = (error && error.message) ? error.message : 'An error occurred while registering your second passphrase. Please try again.';
+        loadingFinished('secondPassphraseRegistered');
+        const text = (error && error.message) ? error.message : i18next.t('An error occurred while registering your second passphrase. Please try again.');
         dispatch(errorAlertDialogDisplayed({ text }));
       });
+    dispatch(passphraseUsed(account.passphrase));
   };
 
 /**
  *
  */
-export const delegateRegistered = ({ activePeer, account, username, secondPassphrase }) =>
+export const delegateRegistered = ({
+  activePeer, account, passphrase, username, secondPassphrase }) =>
   (dispatch) => {
-    registerDelegate(activePeer, username, account.passphrase, secondPassphrase)
+    loadingStarted('delegateRegistered');
+    registerDelegate(activePeer, username, passphrase, secondPassphrase)
       .then((data) => {
+        loadingFinished('delegateRegistered');
         // dispatch to add to pending transaction
         dispatch(transactionAdded({
-          id: data.transactionId,
+          id: data.id,
           senderPublicKey: account.publicKey,
           senderId: account.address,
           username,
           amount: 0,
           fee: Fees.registerDelegate,
-          type: 2,
+          type: transactionTypes.registerDelegate,
         }));
       })
       .catch((error) => {
-        const text = error && error.message ? `${error.message}.` : 'An error occurred while registering as delegate.';
+        loadingFinished('delegateRegistered');
+        const text = error && error.message ? `${error.message}.` : i18next.t('An error occurred while registering as delegate.');
         const actionObj = errorAlertDialogDisplayed({ text });
         dispatch(actionObj);
       });
+    dispatch(passphraseUsed(passphrase));
   };
 
 /**
  *
  */
-export const sent = ({ activePeer, account, recipientId, amount, passphrase, secondPassphrase }) =>
+export const sent = ({ activePeer, account, recipientId,
+  amount, passphrase, secondPassphrase/* , data */ }) =>
   (dispatch) => {
-    send(activePeer, recipientId, toRawLsk(amount), passphrase, secondPassphrase)
-      .then((data) => {
+    loadingStarted('sent');
+    send(activePeer, recipientId, toRawLsk(amount), passphrase, secondPassphrase/* , data */)
+      .then((res) => {
+        loadingFinished('sent');
         dispatch(transactionAdded({
-          id: data.transactionId,
+          id: res.id,
           senderPublicKey: account.publicKey,
           senderId: account.address,
           recipientId,
           amount: toRawLsk(amount),
           fee: Fees.send,
-          type: 0,
+          type: transactionTypes.send,
         }));
       })
       .catch((error) => {
-        const text = error && error.message ? `${error.message}.` : 'An error occurred while creating the transaction.';
+        loadingFinished('sent');
+        const text = error && error.message ? `${error.message}.` : i18next.t('An error occurred while creating the transaction.');
         dispatch(errorAlertDialogDisplayed({ text }));
       });
+    dispatch(passphraseUsed(passphrase));
   };
