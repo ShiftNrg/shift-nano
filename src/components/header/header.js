@@ -63,7 +63,7 @@ const Header = props => (
 
       <Button className={`${styles.button} logout-button`} raised onClick={props.logOut}>{props.t('logout')}</Button>
       <RelativeLink neutral raised className={`${styles.button} receive-button`}
-        to='receive'>{props.t('Receive SHIFT')}</RelativeLink>
+        to='receive'>{props.t('Receive')}</RelativeLink>
       <RelativeLink primary raised disableWhenOffline className={`${styles.button} send-button`}
         to='send'>{props.t('send')}</RelativeLink>
     </PrivateWrapper>
