@@ -20,7 +20,7 @@ const ForgedBlocks = props => (
           <TableHead>
             <TableCell>{props.t('Block height')}</TableCell>
             <TableCell>{props.t('Block Id')}</TableCell>
-            <TableCell>{props.t('Timestamp')}</TableCell>
+            <TableCell>{props.t('Time')}</TableCell>
             <TableCell>{props.t('Total fee')}</TableCell>
             <TableCell>{props.t('Reward')}</TableCell>
           </TableHead>

@@ -37,11 +37,11 @@ describe('MenuBuilder', () => {
     expect(submenu[submenu.length - 1].label).to.equal('About');
 
     // make sure the mac about menu was not added
-    expect(template[0].label).to.not.equal('Lisk Nano');
+    expect(template[0].label).to.not.equal('Shift Nano');
   });
 
   it('Should open link on click', () => {
-    menu.onClickLink(electron, 'https://lisk.io');
-    expect(electron.shell.openExternal).to.have.been.calledWith('https://lisk.io');
+    menu.onClickLink(electron, 'https://shiftproject.com');
+    expect(electron.shell.openExternal).to.have.been.calledWith('https://shiftproject.com');
   });
 });

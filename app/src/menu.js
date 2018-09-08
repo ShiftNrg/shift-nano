@@ -17,15 +17,15 @@ const addAboutMenuForMac = ({ template, name }) => {
 };
 
 const addAboutMenuForNonMac = ({ template, electron }) => {
-  const copyright = `Copyright © 2016 - ${new Date().getFullYear()} Lisk Foundation`;
+  const copyright = `Copyright © 2017 - ${new Date().getFullYear()} Shift Project`;
   template[template.length - 1].submenu.push({
     label: i18n.t('About'),
     click(item, focusedWindow) {
       if (focusedWindow) {
         const options = {
           buttons: ['OK'],
-          icon: `${__dirname}/assets/images/LISK.png`,
-          message: `${i18n.t('Lisk Nano')}\n${i18n.t('Version')} ${electron.app.getVersion()}\n${copyright}`,
+          icon: `${__dirname}/assets/images/SHIFT.png`,
+          message: `${i18n.t('Shift Nano')}\n${i18n.t('Version')} ${electron.app.getVersion()}\n${copyright}`,
         };
         electron.dialog.showMessageBox(focusedWindow, options, () => {});
       }
@@ -116,31 +116,19 @@ const menu = {
         label: i18n.t('Help'),
         submenu: [
           {
-            label: i18n.t('Lisk Website'),
-            click: menu.onClickLink.bind(null, electron, 'https://lisk.io'),
+            label: i18n.t('Shift Website'),
+            click: menu.onClickLink.bind(null, electron, 'https://shiftproject.com'),
           },
           {
-            label: i18n.t('Lisk Chat'),
-            click: menu.onClickLink.bind(null, electron, 'https://lisk.chat'),
-          },
-          {
-            label: i18n.t('Lisk Explorer'),
-            click: menu.onClickLink.bind(null, electron, 'https://explorer.lisk.io'),
-          },
-          {
-            label: i18n.t('Lisk Forum'),
-            click: menu.onClickLink.bind(null, electron, 'https://forum.lisk.io'),
+            label: i18n.t('Shift Explorer'),
+            click: menu.onClickLink.bind(null, electron, 'https://explorer.shiftnrg.org'),
           },
           {
             type: 'separator',
           },
           {
-            label: i18n.t('Report Issue...'),
-            click: menu.onClickLink.bind(null, electron, 'https://lisk.zendesk.com/hc/en-us/requests/new'),
-          },
-          {
-            label: i18n.t('What\'s New...'),
-            click: menu.onClickLink.bind(null, electron, 'https://github.com/LiskHQ/lisk-nano/releases'),
+            label: i18n.t('Releases'),
+            click: menu.onClickLink.bind(null, electron, 'https://github.com/ShiftNrg/shift-nano/releases'),
           },
         ],
       },
