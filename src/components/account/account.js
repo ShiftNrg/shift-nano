@@ -4,14 +4,13 @@ import styles from './account.css';
 import Address from './address';
 import LiskAmount from '../liskAmount';
 import ClickToSend from '../clickToSend';
-import { toRawLsk } from '../../utils/lsk';
+import Fees from '../../constants/fees';
 
 /**
  * Contains some of the important and basic information about the account
  *
  * @param {object} props - include properties of component
  */
-
 const Account = ({
   account, peers, t,
 }) => {
@@ -57,7 +56,7 @@ const Account = ({
             </div>
             <div className={`${grid['col-sm-12']} ${grid['col-xs-8']}`}>
               <ClickToSend
-                rawAmount={Math.max(0, account.balance - toRawLsk(0.1))} >
+                rawAmount={Math.max(0, account.balance - Fees.send)} >
                 <div className={styles['value-wrapper']}>
                   <p className="inner primary full hasTip balance-value">
                     <LiskAmount val={account.balance} /> SHIFT
