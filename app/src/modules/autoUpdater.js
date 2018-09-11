@@ -1,6 +1,9 @@
 import i18n from './../i18n';
 
 export default ({ autoUpdater, dialog, win, process }) => {
+  const disableUpdater = true; // Updater temporary disabled
+  if (disableUpdater) return false;
+
   const updater = {
     menuItem: { enabled: true },
   };

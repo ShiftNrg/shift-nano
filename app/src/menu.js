@@ -34,6 +34,9 @@ const addAboutMenuForNonMac = ({ template, electron }) => {
 };
 
 const addCheckForUpdates = ({ template, checkForUpdates }) => {
+  const disableUpdater = true; // Updater temporary disabled
+  if (disableUpdater) return;
+
   template[template.length - 1].submenu.push({
     label: i18n.t('Check for updates...'),
     click: checkForUpdates,
