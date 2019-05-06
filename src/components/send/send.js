@@ -5,6 +5,7 @@ import { fromRawLsk, toRawLsk } from '../../utils/lsk';
 import AuthInputs from '../authInputs';
 import ActionBar from '../actionBar';
 import { authStatePrefill, authStateIsValid } from '../../utils/form';
+import fees from '../../constants/fees';
 
 import styles from './send.css';
 
@@ -21,7 +22,7 @@ class Send extends React.Component {
       reference: {
         value: '',
       },
-      fee: 0.01,
+      fee: fromRawLsk(fees.send),
       ...authStatePrefill(),
     };
     this.inputValidationRegexps = {
@@ -38,6 +39,7 @@ class Send extends React.Component {
       amount: {
         value: this.props.amount || '',
       },
+      fee: fromRawLsk(this.props.type ? fees[this.props.type] : fees.send),
       ...authStatePrefill(this.props.account),
     };
     this.setState(newState);

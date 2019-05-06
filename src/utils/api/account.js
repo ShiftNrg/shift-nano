@@ -5,6 +5,7 @@ export const getAccount = (activePeer, address) =>
   new Promise((resolve, reject) => {
     activePeer.getAccount(address, (data) => {
       if (data.success) {
+        localStorage.setItem('lastActiveAccount', JSON.stringify(data.account));
         resolve({
           ...data.account,
           serverPublicKey: data.account.publicKey,
