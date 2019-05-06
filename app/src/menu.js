@@ -131,7 +131,7 @@ const menu = {
           },
           {
             label: i18n.t('Releases'),
-            click: menu.onClickLink.bind(null, electron, 'https://github.com/ShiftNrg/shift-nano/releases'),
+            click: menu.onClickLink.bind(null, electron, 'https://github.com/shiftproject/shift-nano/releases'),
           },
         ],
       },
