@@ -176,7 +176,8 @@
       "category": "Network"
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "app/assets/shift.ico"
     }
   },
   "greenkeeper": {
