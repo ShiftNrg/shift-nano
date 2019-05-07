@@ -8,14 +8,19 @@ import actionTypes from '../../constants/actions';
  *
  * @returns {Object} - Next state object
  */
-const peers = (state = { status: {} }, action) => {
+const peers = (state = { status: {}, options: {} }, action) => {
   switch (action.type) {
     case actionTypes.activePeerSet:
-      return Object.assign({}, state, { data: action.data });
+      return Object.assign({}, state, {
+        data: action.data,
+        // data: action.data.activePeer,
+      });
     case actionTypes.activePeerUpdate:
-      return Object.assign({}, state, { status: action.data });
+      return Object.assign({}, state, {
+        status: action.data,
+      });
     case actionTypes.accountLoggedOut:
-      return Object.assign({}, state, { data: {}, status: {} });
+      return Object.assign({}, state, { data: {}, status: {}, options: {} });
     default:
       return state;
   }

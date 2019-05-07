@@ -1,42 +1,52 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { expect } from 'chai';
-import { shallow } from 'enzyme';
-import FormattedNumber from '../formattedNumber/index';
+import { mount } from 'enzyme';
+import FormattedNumber from './index';
+import i18n from '../../i18n';
 
 
 describe('FormattedNumber', () => {
-  it('should normalize "12932689.645" as "12,932,689.645"', () => {
-    const inputValue = '12932689.645';
-    const expectedValue = '12,932,689.645';
-    const wrapper = shallow(<FormattedNumber val={inputValue} />);
-    expect(wrapper.find('span').text()).to.be.equal(expectedValue);
+  const options = {
+    context: { i18n },
+    childContextTypes: {
+      i18n: PropTypes.object.isRequired,
+    },
+  };
+
+  it('renders 0 if raw value is 0', () => {
+    const value = {
+      raw: 0,
+      formatted: '0',
+    };
+    const wrapper = mount(<FormattedNumber val={value.raw} />, options);
+    expect(wrapper.find('span').text()).to.equal(value.formatted);
   });
 
-  it('should normalize "2500" as "2,500"', () => {
-    const inputValue = '2500';
-    const expectedValue = '2,500';
-    const wrapper = shallow(<FormattedNumber val={inputValue} />);
-    expect(wrapper.find('span').text()).to.be.equal(expectedValue);
+  it('renders 1,000 if raw value is 1000', () => {
+    const value = {
+      raw: 1234,
+      formatted: '1,234',
+    };
+    const wrapper = mount(<FormattedNumber val={value.raw} />, options);
+    expect(wrapper.find('span').text()).to.equal(value.formatted);
   });
 
-  it('should normalize "-78945" as "-78,945"', () => {
-    const inputValue = '78945';
-    const expectedValue = '78,945';
-    const wrapper = shallow(<FormattedNumber val={inputValue} />);
-    expect(wrapper.find('span').text()).to.be.equal(expectedValue);
+  it('renders 1,000.95 if raw value is 1000', () => {
+    const value = {
+      raw: 1234.56,
+      formatted: '1,234.56',
+    };
+    const wrapper = mount(<FormattedNumber val={value.raw} />, options);
+    expect(wrapper.find('span').text()).to.equal(value.formatted);
   });
 
-  it('should normalize "0" as "0"', () => {
-    const inputValue = '0';
-    const expectedValue = '0';
-    const wrapper = shallow(<FormattedNumber val={inputValue} />);
-    expect(wrapper.find('span').text()).to.be.equal(expectedValue);
-  });
-
-  it('should normalize "500.12345678" as "500.12345678"', () => {
-    const inputValue = '500.12345678';
-    const expectedValue = '500.12345678';
-    const wrapper = shallow(<FormattedNumber val={inputValue} />);
-    expect(wrapper.find('span').text()).to.be.equal(expectedValue);
+  it('renders 10.01 if raw value is 10.01', () => {
+    const value = {
+      raw: 123.45,
+      formatted: '123.45',
+    };
+    const wrapper = mount(<FormattedNumber val={value.raw} />, options);
+    expect(wrapper.find('span').text()).to.equal(value.formatted);
   });
 });

@@ -1,146 +1,188 @@
-node('lisk-nano-01'){
-  lock(resource: "lisk-nano-01", inversePrecedence: true) {
-    stage ('Cleanup Orphaned Processes') {
-      try {
-      sh '''
-        # Clean up old processes
-        cd ~/lisk-test-nano
-        bash lisk.sh stop_node
-        pkill -f selenium -9 || true
-        pkill -f Xvfb -9 || true
-        rm -rf /tmp/.X0-lock || true
-        pkill -f webpack -9 || true
-      '''
-      } catch (err) {
-        currentBuild.result = 'FAILURE'
-        milestone 1
-        error('Stopping build, installation failed')
-      }
-    }
+def get_build_info() {
+  pr_branch = ''
+  if (env.CHANGE_BRANCH != null) {
+    pr_branch = " (${env.CHANGE_BRANCH})"
+  }
+  build_info = "#${env.BUILD_NUMBER} of <${env.BUILD_URL}|${env.JOB_NAME}>${pr_branch}"
+  return build_info
+}
 
-    stage ('Prepare Workspace') {
+def slack_send(color, message) {
+  /* Slack channel names are limited to 21 characters */
+  CHANNEL_MAX_LEN = 21
+
+  channel = "${env.JOB_NAME}".tokenize('/')[0]
+  channel = channel.replace('lisk-', 'lisk-ci-')
+  if ( channel.size() > CHANNEL_MAX_LEN ) {
+     channel = channel.substring(0, CHANNEL_MAX_LEN)
+  }
+
+  echo "[slack_send] channel: ${channel} "
+  slackSend color: "${color}", message: "${message}", channel: "${channel}"
+}
+
+def fail(reason) {
+  build_info = get_build_info()
+  slack_send('danger', "Build ${build_info} failed (<${env.BUILD_URL}/console|console>, <${env.BUILD_URL}/changes|changes>)\nCause: ${reason}")
+  currentBuild.result = 'FAILURE'
+  error("${reason}")
+}
+
+/* comment out the next line to allow concurrent builds on the same branch */
+properties([disableConcurrentBuilds(), pipelineTriggers([])])
+node('shift-nano') {
+  try {
+    stage ('Checkout and Start Lisk Core') {
       try {
         deleteDir()
         checkout scm
       } catch (err) {
-        currentBuild.result = 'FAILURE'
-        milestone 1
-        error('Stopping build, Checkout failed')
-      }
-    }
-
-    stage ('Start Lisk Core') {
-      try {
-        sh '''#!/bin/bash
-          cd ~/lisk-test-nano
-          bash lisk.sh rebuild -f /home/lisk/lisk-test-nano/blockchain_explorer.db.gz
-          '''
-      } catch (err) {
-        currentBuild.result = 'FAILURE'
-        milestone 1
-        error('Stopping build, Lisk Core failed to start')
+        echo "Error: ${err}"
+        fail('Stopping build: checkout failed')
       }
     }
 
     stage ('Install npm dependencies') {
       try {
-        sh '''#!/bin/bash
+        sh '''
+        cp -r ~/cache/development/node_modules ./ || true
         npm install
-        # Build nano
-        cd $WORKSPACE
-        npm install
-
+        ./node_modules/protractor/bin/webdriver-manager update
         '''
       } catch (err) {
-        currentBuild.result = 'FAILURE'
-        milestone 1
-        error('Stopping build, npm install failed')
+        echo "Error: ${err}"
+        fail('Stopping build: npm install failed')
       }
     }
 
     stage ('Run Eslint') {
       try {
-        sh '''
-        cd $WORKSPACE
-        npm run eslint
-        '''
+        ansiColor('xterm') {
+          sh 'npm run --silent clean-build && npm run --silent copy-files && npm run --silent eslint'
+        }
       } catch (err) {
-        currentBuild.result = 'FAILURE'
-        error('Stopping build, Eslint failed')
+        echo "Error: ${err}"
+        fail('Stopping build: Eslint failed')
       }
     }
 
     stage ('Build Nano') {
       try {
-        sh '''#!/bin/bash
-        # Add coveralls config file
+        sh '''
         cp ~/.coveralls.yml-nano .coveralls.yml
-
-        # Run Build
-        npm run build
+        npm run --silent build
         '''
       } catch (err) {
-        currentBuild.result = 'FAILURE'
-        milestone 1
-        error('Stopping build, Nano build failed')
+        echo "Error: ${err}"
+        fail('Stopping build: nano build failed')
       }
     }
 
-    stage ('Run Tests') {
+    stage ('Deploy') {
       try {
-        sh '''
-        export ON_JENKINS=true
-
-        # Run test
-        cd $WORKSPACE
-        npm run test
-
-        # Submit coverage to coveralls
-        cat coverage/*/lcov.info | coveralls -v
-        '''
+        sh 'rsync -axl --delete --rsync-path="mkdir -p /var/www/test/${JOB_NAME%/*}/$BRANCH_NAME/ && rsync" $WORKSPACE/app/build/ jenkins@master-01:/var/www/test/${JOB_NAME%/*}/$BRANCH_NAME/'
+        githubNotify context: 'Jenkins test deployment', description: 'Commit was deployed to test', status: 'SUCCESS', targetUrl: "${HUDSON_URL}test/" + "${JOB_NAME}".tokenize('/')[0] + "/${BRANCH_NAME}"
       } catch (err) {
-        currentBuild.result = 'FAILURE'
-        error('Stopping build, Test suite failed')
+        echo "Error: ${err}"
+        fail('Stopping build: deploy failed')
       }
     }
 
-    stage ('Start Dev Server and Run Tests') {
+    stage ('Run Unit Tests') {
       try {
-        sh '''
-        # Run Dev build and Build
-        cd $WORKSPACE
-        export NODE_ENV=
-        npm run dev &> .lisk-nano.log &
-        sleep 30
-
-        # End to End test configuration
-        export DISPLAY=:99
-        Xvfb :99 -ac -screen 0 1280x1024x24 &
-        ./node_modules/protractor/bin/webdriver-manager update
-
-        # Run End to End Tests
-        npm run e2e-test
-
-        cd ~/lisk-test-nano
-        bash lisk.sh stop_node
-        pkill -f selenium -9 || true
-        pkill -f Xvfb -9 || true
-        rm -rf /tmp/.X0-lock || true
-        pkill -f webpack -9 || true
-
-        # Cleanup - delete all files on success
-        cd $WORKSPACE
-        rm -rf *
-        '''
+        ansiColor('xterm') {
+          sh '''
+          ON_JENKINS=true npm run --silent test
+          # Submit coverage to coveralls
+          cat coverage/*/lcov.info | coveralls -v
+          '''
+        }
       } catch (err) {
-        currentBuild.result = 'FAILURE'
-        milestone 1
-        error('Stopping build, End to End Test suite failed')
+        echo "Error: ${err}"
+        fail('Stopping build: test suite failed')
       }
     }
 
-    stage ('Set milestone') {
-      milestone 1
+    stage ('Run E2E Tests') {
+      try {
+        ansiColor('xterm') {
+          withCredentials([string(credentialsId: 'shift-nano-testnet-passphrase', variable: 'TESTNET_PASSPHRASE')]) {
+            sh '''
+            N=${EXECUTOR_NUMBER:-0}; N=$((N+1))
+
+            # End to End test configuration
+            export DISPLAY=:1$N
+            Xvfb :1$N -ac -screen 0 1280x1024x24 &
+
+	    cp -r ~/liskhq/lisk-docker/examples/development $WORKSPACE/$BRANCH_NAME
+	    cd $WORKSPACE/$BRANCH_NAME
+	    cp /home/lisk/blockchain_explorer.db.gz ./blockchain.db.gz
+	    LISK_VERSION=1.0.0-rc.1 make coldstart
+	    SHIFT_PORT=$( docker-compose port lisk 9305 |cut -d ":" -f 2 )
+	    cd -
+
+            # Run end-to-end tests
+
+            npm run serve --  $WORKSPACE/app/build -p 300$N -a 127.0.0.1 &>server.log &
+            if [ -z $CHANGE_BRANCH ]; then
+              npm run --silent e2e-test -- --params.baseURL http://127.0.0.1:300$N  --params.shiftCoreURL https://testnet.lisk.io --cucumberOpts.tags @testnet --params.useTestnetPassphrase true
+            else
+              echo "Skipping @testnet end-to-end tests because we're not on 'development' branch"
+            fi
+            npm run --silent e2e-test -- --params.baseURL http://127.0.0.1:300$N  --params.shiftCoreURL http://127.0.0.1:$SHIFT_PORT
+            if [ -z $CHANGE_BRANCH ]; then
+              npm run --silent e2e-test -- --params.baseURL http://127.0.0.1:300$N  --cucumberOpts.tags @testnet --params.useTestnetPassphrase true --params.network testnet
+            else
+              echo "Skipping @testnet end-to-end tests because we're not on 'development' branch"
+            fi
+            '''
+          }
+        }
+      } catch (err) {
+        echo "Error: ${err}"
+        fail('Stopping build: end-to-end test suite failed')
+      }
+    }
+  } catch(err) {
+    echo "Error: ${err}"
+    ansiColor('xterm') {
+      sh '''
+      cd $WORKSPACE/$BRANCH_NAME
+      docker-compose logs
+      '''
+    }
+  } finally {
+    ansiColor('xterm') {
+      sh '''
+      cd $WORKSPACE/$BRANCH_NAME
+      make mrproper
+      '''
+    }
+    sh '''
+    N=${EXECUTOR_NUMBER:-0}; N=$((N+1))
+    pgrep --list-full -f "Xvfb :1$N" || true
+    pkill --echo -f "Xvfb :1$N" -9 || echo "pkill returned code $?"
+
+    # cache nightly builds (development) only to save space
+    if [ $BRANCH_NAME = "development" ]; then
+        rsync -axl --delete $WORKSPACE/node_modules/ ~/cache/development/node_modules/ || true
+    fi
+    '''
+    dir('node_modules') {
+      deleteDir()
+    }
+
+    if (currentBuild.result == null || currentBuild.result == 'SUCCESS') {
+      /* delete all files on success */
+      deleteDir()
+      /* notify of success if previous build failed */
+      previous_build = currentBuild.getPreviousBuild()
+      if (previous_build != null && previous_build.result == 'FAILURE') {
+        build_info = get_build_info()
+        slack_send('good', "Recovery: build ${build_info} was successful.")
+      }
+    } else {
+      archiveArtifacts allowEmptyArchive: true, artifacts: 'e2e-test-screenshots/'
     }
   }
 }
