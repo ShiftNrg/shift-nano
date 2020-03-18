@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
+import Lisk from 'shift-js';
 import { listAccountDelegates,
   listDelegates,
   getDelegate,
@@ -7,7 +8,6 @@ import { listAccountDelegates,
   voteAutocomplete,
   unvoteAutocomplete,
   registerDelegate } from './delegate';
-import * as peers from './peers';
 
 const username = 'genesis_1';
 const secret = 'sample_secret';
@@ -19,8 +19,8 @@ describe('Utils: Delegate', () => {
   let activePeer;
 
   beforeEach(() => {
-    peersMock = sinon.mock(peers);
-    activePeer = {};
+    activePeer = new Lisk.APIClient(['http://localhost:4000'], {});
+    peersMock = sinon.mock(activePeer.delegates);
   });
 
   afterEach(() => {
@@ -30,85 +30,79 @@ describe('Utils: Delegate', () => {
 
   describe('listAccountDelegates', () => {
     it('should return a promise', () => {
-      const promise = listAccountDelegates();
-      expect(typeof promise.then).to.be.equal('function');
+      const votingMock = sinon.mock(activePeer.votes);
+      votingMock.expects('get').withArgs({ address: 'address', limit: 101 })
+        .returnsPromise().resolves('resolved promise');
+      const returnedPromise = listAccountDelegates(activePeer, 'address');
+      return expect(returnedPromise).to.eventually.equal('resolved promise');
     });
   });
 
   describe('listDelegates', () => {
-    it('should return requestToActivePeer(activePeer, `delegates/`, options) if options = {}', () => {
+    it('should return activePeer.delegates.get(activePeer, options) if options = {}', () => {
       const options = {};
-      const mockedPromise = new Promise((resolve) => { resolve(); });
-      peersMock.expects('requestToActivePeer').withArgs(activePeer, 'delegates/', options).returns(mockedPromise);
-
+      peersMock.expects('get').withArgs(options)
+        .returnsPromise().resolves('resolved promise');
       const returnedPromise = listDelegates(activePeer, options);
-      expect(returnedPromise).to.equal(mockedPromise);
+      return expect(returnedPromise).to.eventually.equal('resolved promise');
     });
 
-    it('should return requestToActivePeer(activePeer, `delegates/search`, options) if options.q is set', () => {
-      const options = {
-        q: 'genesis_1',
-      };
-      const mockedPromise = new Promise((resolve) => { resolve(); });
-      peersMock.expects('requestToActivePeer').withArgs(activePeer, 'delegates/search', options).returns(mockedPromise);
+    it('should return activePeer.delegates.get(activePeer, options) if options.search is set', () => {
+      const options = { search: 'genesis_1' };
+      peersMock.expects('get').withArgs(options)
+        .returnsPromise().resolves('resolved promise');
 
       const returnedPromise = listDelegates(activePeer, options);
-      expect(returnedPromise).to.equal(mockedPromise);
+      return expect(returnedPromise).to.eventually.equal('resolved promise');
     });
   });
 
   describe('getDelegate', () => {
-    it('should return requestToActivePeer(activePeer, `delegates/get`, options)', () => {
+    it('should return activePeer.delegates.get(activePeer, options)', () => {
       const options = { publicKey: '"86499879448d1b0215d59cbf078836e3d7d9d2782d56a2274a568761bff36f19"' };
-      const mockedPromise = new Promise((resolve) => { resolve(); });
-      peersMock.expects('requestToActivePeer').withArgs(activePeer, 'delegates/get', options).returns(mockedPromise);
+      peersMock.expects('get').withArgs(options)
+        .returnsPromise().resolves('resolved promise');
 
-      const returnedPromise = getDelegate(activePeer, options.publicKey);
-      expect(returnedPromise).to.equal(mockedPromise);
+      const returnedPromise = getDelegate(activePeer, options);
+      return expect(returnedPromise).to.eventually.equal('resolved promise');
     });
   });
 
   describe('unvoteAutocomplete', () => {
-    it('should return a promise', () => {
-      const votedList = ['genesis_1', 'genesis_2', 'genesis_3'];
-      const nonExistingUsername = 'genesis_4';
-      const promise = unvoteAutocomplete(username, votedList);
-      expect(typeof promise.then).to.be.equal('function');
-      promise.then((result) => {
-        expect(result).to.be.equal(true);
-      });
+    it('should return a promise that resolves an empty array when trying to unvote a non-existing user name', () => {
+      const voteList = {
+        genesis_1: { confirmed: true, unconfirmed: false, publicKey: 'sample_key' },
+        genesis_2: { confirmed: true, unconfirmed: false, publicKey: 'sample_key' },
+        genesis_3: { confirmed: true, unconfirmed: false, publicKey: 'sample_key' },
+      };
 
-      unvoteAutocomplete(nonExistingUsername, votedList).then((result) => {
-        expect(result).to.be.equal(false);
-      });
+      const nonExistingUsername = 'genesis_4';
+      return expect(unvoteAutocomplete(nonExistingUsername, voteList)).to.eventually.eql([]);
+    });
+
+    it('should return a promise that resolves an array when trying to unvote an existing user name', () => {
+      const voteList = {
+        genesis_1: { confirmed: true, unconfirmed: true, publicKey: 'sample_key' },
+        genesis_2: { confirmed: true, unconfirmed: false, publicKey: 'sample_key' },
+        genesis_3: { confirmed: true, unconfirmed: false, publicKey: 'sample_key' },
+      };
+
+      const expectedResult = [{ username: 'genesis_1', publicKey: 'sample_key' }];
+      return expect(unvoteAutocomplete(username, voteList)).to.eventually.eql(expectedResult);
     });
   });
 
   describe('registerDelegate', () => {
-    it('should return requestToActivePeer(activePeer, `delegates`, data)', () => {
+    it('should return a promise', () => {
       const data = {
-        username: 'test',
-        secret: 'wagon dens',
-        secondSecret: 'wagon dens',
+        username: 'giraffe laugh math dash chalk butter ghost report truck interest merry lens',
+        passphrase: 'wagon dens',
+        secondPassphrase: 'wagon dens',
       };
-      const mockedPromise = new Promise((resolve) => { resolve(); });
-      peersMock.expects('requestToActivePeer').withArgs(activePeer, 'delegates', data).returns(mockedPromise);
 
       const returnedPromise = registerDelegate(
         activePeer, data.username, data.secret, data.secondSecret);
-      expect(returnedPromise).to.equal(mockedPromise);
-    });
-
-    it('should return requestToActivePeer(activePeer, `delegates`, data) even if no secondSecret specified', () => {
-      const data = {
-        username: 'test',
-        secret: 'wagon dens',
-      };
-      const mockedPromise = new Promise((resolve) => { resolve(); });
-      peersMock.expects('requestToActivePeer').withArgs(activePeer, 'delegates', data).returns(mockedPromise);
-
-      const returnedPromise = registerDelegate(activePeer, data.username, data.secret);
-      expect(returnedPromise).to.equal(mockedPromise);
+      expect(typeof returnedPromise.then).to.be.equal('function');
     });
   });
 
@@ -129,15 +123,16 @@ describe('Utils: Delegate', () => {
 
   describe('voteAutocomplete', () => {
     it('should return requestToActivePeer(activePeer, `delegates/`, data)', () => {
-      const delegates = [
-        { username: 'genesis_42' },
-        { username: 'genesis_44' },
-      ];
-      const mockedPromise = new Promise((resolve) => { resolve({ success: true, delegates }); });
-      peersMock.expects('requestToActivePeer').withArgs(activePeer, 'delegates/search', { q: username }).returns(Promise.resolve({ success: true, delegates }));
+      // const delegates = [
+      //   { username: 'genesis_42' },
+      //   { username: 'genesis_44' },
+      // ];
+      const votedDict = { genesis_3: { confirmed: true, unconfirmed: false, publicKey: 'sample_key' } };
+      // peersMock.expects('get').withArgs(activePeer, 'delegates/', { search: username })
+      //   .returnsPromise().resolves({ success: true, data: delegates });
 
-      const returnedPromise = voteAutocomplete(activePeer, username, {});
-      expect(returnedPromise).to.deep.equal(mockedPromise);
+      const returnedPromise = voteAutocomplete(activePeer, username, votedDict);
+      expect(typeof returnedPromise.then).to.be.equal('function');
     });
   });
 });

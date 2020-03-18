@@ -23,12 +23,12 @@ describe('Notification', () => {
 
     it('should call window.Notification', () => {
       window.Notification = mockNotification;
-      const msg = `You've received ${fromRawLsk(amount)} SHIFT.`;
+      const msg = `You've received ${fromRawLsk(amount)} LSK.`;
 
       notify.isFocused = false;
       notify.about('deposit', amount);
       expect(mockNotification).to.have.been.calledWith(
-         'SHIFT received', { body: msg },
+        'LSK received', { body: msg },
       );
       mockNotification.reset();
     });
@@ -36,6 +36,13 @@ describe('Notification', () => {
     it('should not call window.Notification if app is focused', () => {
       notify.isFocused = true;
       notify.about('deposit', amount);
+      expect(mockNotification).to.have.been.not.calledWith();
+      mockNotification.reset();
+    });
+
+    it('should do nothing if an unhandled notification is supplied', () => {
+      notify.isFocused = false;
+      notify.about('unhandled_notification');
       expect(mockNotification).to.have.been.not.calledWith();
       mockNotification.reset();
     });

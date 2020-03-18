@@ -1,5 +1,7 @@
+import { errorAlertDialogDisplayed } from './dialog';
 import actionTypes from '../constants/actions';
 import { transactions } from '../utils/api/account';
+import { loadingStarted, loadingFinished } from '../utils/loading';
 
 /**
  * An action to dispatch transactionAdded
@@ -8,6 +10,15 @@ import { transactions } from '../utils/api/account';
 export const transactionAdded = data => ({
   data,
   type: actionTypes.transactionAdded,
+});
+
+/**
+ * An action to dispatch transactionsFailed
+ *
+ */
+export const transactionsFailed = data => ({
+  data,
+  type: actionTypes.transactionsFailed,
 });
 
 /**
@@ -34,11 +45,16 @@ export const transactionsLoaded = data => ({
  */
 export const transactionsRequested = ({ activePeer, address, limit, offset }) =>
   (dispatch) => {
+    loadingStarted('transactionsRequested');
     transactions(activePeer, address, limit, offset)
-    .then((response) => {
-      dispatch(transactionsLoaded({
-        count: parseInt(response.count, 10),
-        confirmed: response.transactions,
-      }));
-    });
+      .then((response) => {
+        loadingFinished('transactionsRequested');
+        dispatch(transactionsLoaded({
+          count: parseInt(response.count, 10),
+          confirmed: response.transactions,
+        }));
+      }).catch((error) => {
+        loadingFinished('transactionsRequested');
+        dispatch(errorAlertDialogDisplayed({ text: error.message }));
+      });
   };

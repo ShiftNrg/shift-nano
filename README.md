@@ -1,11 +1,15 @@
 # Shift Nano
 
+[![Build Status](https://jenkins.lisk.io/buildStatus/icon?job=lisk-nano/development)](https://jenkins.lisk.io/job/lisk-nano/job/development)
+[![Coverage Status](https://coveralls.io/repos/github/LiskHQ/lisk-nano/badge.svg?branch=development)](https://coveralls.io/github/LiskHQ/lisk-nano?branch=development)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
+[![Join the chat at https://gitter.im/LiskHQ/lisk](https://badges.gitter.im/LiskHQ/lisk.svg)](https://gitter.im/LiskHQ/lisk?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![devDependencies Status](https://david-dm.org/liskHQ/lisk-nano/dev-status.svg)](https://david-dm.org/liskHQ/lisk-nano?type=dev)
 
 ## Development
 
 ```
-git clone https://github.com/shiftNrg/shift-nano.git
+git clone https://github.com/shiftproject/shift-nano.git
 cd shift-nano
 npm install
 npm run dev
@@ -33,7 +37,20 @@ npm run build
 
 ### Start
 
-Start the Electron client.
+
+Start the Electron client. Before staring you need to make sure the application is built. If you need to built the entire application, run
+
+```
+npm run build
+```
+
+as mentioned before. And if you want to solely build electron app, run
+
+```
+npm run build-electron
+```
+
+Then, in order to launch electron, you can run
 
 ```
 npm run start
@@ -41,26 +58,26 @@ npm run start
 
 ### Windows
 
-Build package for Windows.
+Build package for Windows (on Windows in [Git BASH](https://git-for-windows.github.io/)).
 
 ```
-npm run dist:win
+npm run pack:win
 ```
 
 ### macOS
 
-Build package for macOS.
+Build package for macOS (on macOs)
 
 ```
-npm run dist:mac
+npm run pack 
 ```
 
 ### Linux
 
-Build package for Linux.
+Build package for Linux (on Linux).
 
 ```
-npm run dist:linux
+npm run pack 
 ```
 
 ## Run unit tests
@@ -85,7 +102,7 @@ Setup protractor
 ./node_modules/protractor/bin/webdriver-manager update
 ```
 
-Setup a lisk test node to run on localhost:4000 as described in https://github.com/LiskHQ/lisk#tests
+Setup a Shift test node to run on localhost:4000 as described in https://github.com/shiftproject/shift#tests
 
 And run it with [pm2](http://pm2.keymetrics.io/).
 
@@ -97,10 +114,10 @@ Start the development version of shift-nano:
 npm run dev
 ```
 
-Run the protractor tests (replace `~/git/lisk/` with your path to lisk core):
+Run the protractor tests (replace `~/git/shift/` with your path to shift core):
 
 ```
-./e2e-test-setup.sh ~/git/lisk/
+./e2e-test-setup.sh ~/git/shift/
 npm run e2e-test
 ```
 
@@ -118,6 +135,8 @@ http://localhost:6006/
 
 ## Authors
 
+- Ralf S <ralfs@shiftnrg.org>
+- Craig C <craig@shiftnrg.org>
 - Ricardo Ferro <ricardo.ferro@gmail.com>
 - Oliver Beddows <oliver@lightcurve.io>
 - Vít Stanislav <vit@lightcurve.io>
@@ -127,20 +146,21 @@ http://localhost:6006/
 
 ## License
 
-Copyright © 2016-2017 Lisk Foundation / Shift
+Copyright © Shift Project
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the [GNU General Public License](https://github.com/LiskHQ/lisk-nano/tree/master/LICENSE) along with this program.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the [GNU General Public License](https://github.com/shiftproject/shift-nano/tree/master/LICENSE) along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ***
 
-This program also incorporates work previously released with lisk-nano `0.1.2` (and earlier) versions under the [MIT License](https://opensource.org/licenses/MIT). To comply with the requirements of that license, the following permission notice, applicable to those parts of the code only, is included below:
+This program also incorporates work previously released with shift-nano `0.1.2` (and earlier) versions under the [MIT License](https://opensource.org/licenses/MIT). To comply with the requirements of that license, the following permission notice, applicable to those parts of the code only, is included below:
 
-Copyright © 2016-2017 Lisk Foundation
-Copyright © 2015 Crypti
+- Copyright © 2017-2019 Shift Project
+- Copyright © 2016-2017 Lisk Foundation
+- Copyright © 2015 Crypti
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

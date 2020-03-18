@@ -1,6 +1,6 @@
 import Lisk from 'shift-js';
 import { expect } from 'chai';
-import { spy, stub } from 'sinon';
+import { spy, stub, match } from 'sinon';
 import middleware from './login';
 import actionTypes from '../../constants/actions';
 import * as accountApi from '../../utils/api/account';
@@ -10,13 +10,8 @@ describe('Login middleware', () => {
   let store;
   let next;
   const passphrase = 'wagon stock borrow episode laundry kitten salute link globe zero feed marble';
-  const activePeer = Lisk.api({
-    name: 'Custom Node',
-    custom: true,
-    address: 'http://localhost:4000',
-    testnet: true,
-    nethash: '198f2b61a8eb95fbeed58b8216780b68f697f26b849acf00c8c93bb9b24f783d',
-  });
+  const activePeer = new Lisk.APIClient(['http://localhost:4000'], {});
+
   const activePeerSetAction = {
     type: actionTypes.activePeerSet,
     data: {
@@ -50,7 +45,7 @@ describe('Login middleware', () => {
     middleware(store)(next)(activePeerSetAction);
     expect(next).to.have.been.calledWith({
       type: actionTypes.activePeerSet,
-      data: activePeer,
+      data: match.hasNested('activePeer', activePeer),
     });
   });
 
@@ -65,7 +60,7 @@ describe('Login middleware', () => {
     delegateApiMock.restore();
   });
 
-  it.skip(`should fetch account and delegate info on ${actionTypes.activePeerSet} action (delegate)`, () => {
+  it(`should fetch account and delegate info on ${actionTypes.activePeerSet} action (delegate)`, () => {
     const accountApiMock = stub(accountApi, 'getAccount').returnsPromise().resolves({ success: true, balance: 0 });
     const delegateApiMock = stub(delegateApi, 'getDelegate').returnsPromise().resolves({
       success: true,

@@ -9,15 +9,17 @@ describe('Reducer: peers(state, action)', () => {
     const action = {
       type: actionTypes.activePeerSet,
       data: {
-        currentPeer: 'localhost',
-        port: 4000,
+        activePeer: {
+          currentPeer: 'localhost',
+          port: 4000,
+        },
         options: {
           name: 'Custom Node',
         },
       },
     };
 
-    const newState = { data: action.data };
+    const newState = { data: action.data.activePeer, options: action.data.options };
     const changedState = peers(state, action);
     expect(changedState).to.deep.equal(newState);
   });
@@ -49,7 +51,7 @@ describe('Reducer: peers(state, action)', () => {
       type: actionTypes.accountLoggedOut,
     };
 
-    const newState = { status: {}, data: {} };
+    const newState = { status: {}, data: {}, options: {} };
     const changedState = peers(state, action);
     expect(changedState).to.deep.equal(newState);
   });
