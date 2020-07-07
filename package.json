@@ -125,7 +125,7 @@
     "lolex": "=2.3.2",
     "mocha": "3.5.3",
     "mocha-steps": "1.1.0",
-    "npm": "6.0.1",
+    "npm": "6.14.6",
     "postcss-for": "=2.1.1",
     "postcss-loader": "=2.0.6",
     "postcss-partial-import": "=4.1.0",
