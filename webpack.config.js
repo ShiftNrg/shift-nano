@@ -5,6 +5,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const { NamedModulesPlugin } = require('webpack');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const Uglify = require('uglifyjs-webpack-plugin');
 /* eslint-enable */
 
 const reactToolboxVariables = {
@@ -65,10 +66,7 @@ module.exports = (env) => {
         allChunks: true,
       }),
       env.prod
-        ? new webpack.optimize.UglifyJsPlugin({
-          sourceMap: false,
-          mangle: false,
-        })
+        ? new Uglify()
         : undefined,
       env.analyze ? new BundleAnalyzerPlugin() : undefined,
       !env.prod ? new NamedModulesPlugin() : undefined,

@@ -9,7 +9,7 @@
 ## Development
 
 ```
-git clone https://github.com/shiftproject/shift-nano.git
+git clone https://github.com/shiftnrg/shift-nano.git
 cd shift-nano
 npm install
 npm run dev
@@ -102,7 +102,7 @@ Setup protractor
 ./node_modules/protractor/bin/webdriver-manager update
 ```
 
-Setup a Shift test node to run on localhost:4000 as described in https://github.com/shiftproject/shift#tests
+Setup a Shift test node to run on localhost:4000 as described in https://github.com/shiftnrg/shift#tests
 
 And run it with [pm2](http://pm2.keymetrics.io/).
 
@@ -146,18 +146,19 @@ http://localhost:6006/
 
 ## License
 
-Copyright © Shift Project
+Copyright © Shift Community Project
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the [GNU General Public License](https://github.com/shiftproject/shift-nano/tree/master/LICENSE) along with this program.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the [GNU General Public License](https://github.com/shiftnrg/shift-nano/tree/master/LICENSE) along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ***
 
 This program also incorporates work previously released with shift-nano `0.1.2` (and earlier) versions under the [MIT License](https://opensource.org/licenses/MIT). To comply with the requirements of that license, the following permission notice, applicable to those parts of the code only, is included below:
 
+- Copyright © 2020- Shift Community Project
 - Copyright © 2017-2019 Shift Project
 - Copyright © 2016-2017 Lisk Foundation
 - Copyright © 2015 Crypti

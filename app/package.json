@@ -1,10 +1,10 @@
 {
   "name": "shift-nano",
-  "version": "2.0.1",
+  "version": "2.2.0",
   "description": "Shift Nano",
   "main": "./build/main.js",
   "author": {
-    "name": "Shift Project",
+    "name": "Shift Community Project",
     "email": "connect@shiftnrg.org"
   }
 }
