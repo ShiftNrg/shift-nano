@@ -27,7 +27,7 @@ app.on('window-all-closed', () => {
 
 // This will override the values defined in the app’s .plist file (macOS)
 if (process.platform === 'darwin') {
-  const copyright = `Copyright © 2018 - ${new Date().getFullYear()} Shift Project | 2016 - 2017 Lisk Foundation`;
+  const copyright = `Copyright © 2020 - ${new Date().getFullYear()} Shift Community Project | 2016 - 2017 Lisk Foundation`;
   app.setAboutPanelOptions({ applicationName: 'Shift Nano', copyright });
 }
 

@@ -7,6 +7,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const baseConfig = require('./webpack.config');
 const reactConfig = require('./webpack.config.react');
 const reactToolboxVariables = require('./reactToolbox.config');
+const Uglify = require('uglifyjs-webpack-plugin');
 /* eslint-enable import/no-extraneous-dependencies */
 
 module.exports = merge(baseConfig, reactConfig, {
@@ -23,10 +24,7 @@ module.exports = merge(baseConfig, reactConfig, {
         NODE_ENV: JSON.stringify('production'),
       },
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: false,
-      mangle: false,
-    }),
+    new Uglify(),
     new NamedModulesPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
@@ -34,6 +32,18 @@ module.exports = merge(baseConfig, reactConfig, {
   ],
   module: {
     rules: [
+      {
+        // Only run `.js` files through Babel
+        test: /\.m?js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['es2015', 'react', 'stage-3'],
+            plugins: ['syntax-trailing-function-commas'],
+          },
+        },
+      },
       {
         test: /\.css$/,
         use: ['css-hot-loader'].concat(ExtractTextPlugin.extract({

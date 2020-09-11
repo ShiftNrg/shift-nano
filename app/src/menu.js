@@ -17,7 +17,7 @@ const addAboutMenuForMac = ({ template, name }) => {
 };
 
 const addAboutMenuForNonMac = ({ template, electron }) => {
-  const copyright = `Copyright © 2017 - ${new Date().getFullYear()} Shift Project`;
+  const copyright = `Copyright © 2020 - ${new Date().getFullYear()} Shift Community Project`;
   template[template.length - 1].submenu.push({
     label: i18n.t('About'),
     click(item, focusedWindow) {
@@ -120,7 +120,7 @@ const menu = {
         submenu: [
           {
             label: i18n.t('Shift Website'),
-            click: menu.onClickLink.bind(null, electron, 'https://shiftnrg.com'),
+            click: menu.onClickLink.bind(null, electron, 'https://shiftnrg.org'),
           },
           {
             label: i18n.t('Shift Explorer'),

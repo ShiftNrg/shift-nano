@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 import React from 'react';
 import Input from 'react-toolbox/lib/input';
 import { IconMenu, MenuItem } from 'react-toolbox/lib/menu';
