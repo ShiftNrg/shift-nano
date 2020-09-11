@@ -1,9 +1,9 @@
 {
   "name": "shift-nano",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Shift Nano",
-  "homepage": "https://github.com/shiftproject/shift-nano",
-  "bugs": "https://github.com/shiftproject/shift-nano/issues",
+  "homepage": "https://github.com/shiftnrg/shift-nano",
+  "bugs": "https://github.com/shiftnrg/shift-nano/issues",
   "main": "main.js",
   "scripts": {
     "build": "npm run clean-build && npm run copy-files && npm run build-prod && npm run build-electron",
@@ -28,11 +28,11 @@
     "build-storybook": "build-storybook",
     "serve": "http-server"
   },
-  "author": "Shift Project <connect@shiftproject.com>, Lisk Foundation <admin@lisk.io>, lightcurve GmbH <admin@lightcurve.io>",
+  "author": "Shift Project <connect@shiftnrg.com>, Lisk Foundation <admin@lisk.io>, lightcurve GmbH <admin@lightcurve.io>",
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/shiftproject/shift-nano"
+    "url": "https://github.com/shiftnrg/shift-nano"
   },
   "dependencies": {
     "bignumber.js": "4.0.4",
@@ -65,7 +65,7 @@
     "redux": "3.7.2",
     "redux-logger": "=3.0.6",
     "redux-thunk": "=2.2.0",
-    "shift-js": "git+https://github.com/shiftproject/shift-js.git",
+    "shift-js": "git+https://github.com/shiftnrg/shift-js.git",
     "socket.io-client": "=2.0.3",
     "webpack-merge": "=4.1.0"
   },
@@ -178,6 +178,10 @@
     "win": {
       "target": "nsis",
       "icon": "app/assets/shift.ico"
+    },
+    "mac": {
+      "target": "pkg",
+      "icon": "app/assets/shift.icns"
     }
   },
   "greenkeeper": {

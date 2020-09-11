@@ -41,7 +41,7 @@ describe('MenuBuilder', () => {
   });
 
   it('Should open link on click', () => {
-    menu.onClickLink(electron, 'https://shiftproject.com');
-    expect(electron.shell.openExternal).to.have.been.calledWith('https://shiftproject.com');
+    menu.onClickLink(electron, 'https://shiftnrg.com');
+    expect(electron.shell.openExternal).to.have.been.calledWith('https://shiftnrg.com');
   });
 });

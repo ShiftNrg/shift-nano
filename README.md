@@ -9,7 +9,7 @@
 ## Development
 
 ```
-git clone https://github.com/shiftproject/shift-nano.git
+git clone https://github.com/shiftnrg/shift-nano.git
 cd shift-nano
 npm install
 npm run dev
@@ -102,7 +102,7 @@ Setup protractor
 ./node_modules/protractor/bin/webdriver-manager update
 ```
 
-Setup a Shift test node to run on localhost:4000 as described in https://github.com/shiftproject/shift#tests
+Setup a Shift test node to run on localhost:4000 as described in https://github.com/shiftnrg/shift#tests
 
 And run it with [pm2](http://pm2.keymetrics.io/).
 
@@ -152,7 +152,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the [GNU General Public License](https://github.com/shiftproject/shift-nano/tree/master/LICENSE) along with this program.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the [GNU General Public License](https://github.com/shiftnrg/shift-nano/tree/master/LICENSE) along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ***
 

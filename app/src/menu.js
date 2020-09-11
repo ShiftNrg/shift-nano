@@ -120,7 +120,7 @@ const menu = {
         submenu: [
           {
             label: i18n.t('Shift Website'),
-            click: menu.onClickLink.bind(null, electron, 'https://shiftproject.com'),
+            click: menu.onClickLink.bind(null, electron, 'https://shiftnrg.com'),
           },
           {
             label: i18n.t('Shift Explorer'),
@@ -131,7 +131,7 @@ const menu = {
           },
           {
             label: i18n.t('Releases'),
-            click: menu.onClickLink.bind(null, electron, 'https://github.com/shiftproject/shift-nano/releases'),
+            click: menu.onClickLink.bind(null, electron, 'https://github.com/shiftnrg/shift-nano/releases'),
           },
         ],
       },
