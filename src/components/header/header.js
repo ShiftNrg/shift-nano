@@ -53,6 +53,15 @@ const Header = props => (
         </MenuItem>
         <MenuDivider />
         <MenuItem theme={styles}>
+          <RelativeLink className={`burn-wshift ${styles.menuLink}`}
+            to='burn-wshift'>{props.t('Migrate-to-wSHIFT')}</RelativeLink>
+        </MenuItem>
+        <MenuItem theme={styles}>
+          <RelativeLink className={`burn-substrate ${styles.menuLink}`}
+            to='burn-substrate'>{props.t('Migrate-to-Substrate')}</RelativeLink>
+        </MenuItem>
+        <MenuDivider />
+        <MenuItem theme={styles}>
           <RelativeLink className={`${styles.menuLink} saved-accounts`}
             to='saved-accounts'>{props.t('Saved accounts')}</RelativeLink>
         </MenuItem>

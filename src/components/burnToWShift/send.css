@@ -1,0 +1,25 @@
+.send {
+  position: relative;
+}
+
+.sendAllMenu {
+  position: absolute !important;
+  right: 0;
+  top: 86px;
+}
+
+.fee {
+  text-align: right;
+  margin-top: -12px;
+  margin-bottom: 24px;
+  font-size: 12px;
+  line-height: 14px;
+  color: grey;
+}
+
+.notice {
+  float: left;
+  margin-right: 10px;
+  display: inline-block;
+  margin-top: -3px;
+}
