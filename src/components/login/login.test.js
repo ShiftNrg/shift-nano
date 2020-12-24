@@ -11,7 +11,7 @@ import Login from './login';
 
 describe('Login', () => {
   let wrapper;
-  const address = 'http:localhost:8080';
+  const address = 'http:localhost:8090';
   const passphrase = 'recipe bomb asset salon coil symbol tiger engine assist pact pumpkin';
   // Mocking store
   const account = {

@@ -36,7 +36,7 @@ module.exports = (env) => {
     devServer: {
       contentBase: 'src',
       inline: true,
-      port: 8080,
+      port: 8090,
       historyApiFallback: true,
     },
     plugins: [

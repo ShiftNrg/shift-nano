@@ -627,7 +627,7 @@
 - Account with second passphrase cannot register as delegate [\#198](https://github.com/LiskHQ/lisk-nano/issues/198)
 - Maximum amount validation doesn't work [\#194](https://github.com/LiskHQ/lisk-nano/issues/194)
 - Second passphrase registration menu item persists [\#190](https://github.com/LiskHQ/lisk-nano/issues/190)
-- http://localhost:8080/ is broken [\#180](https://github.com/LiskHQ/lisk-nano/issues/180)
+- http://localhost:8090/ is broken [\#180](https://github.com/LiskHQ/lisk-nano/issues/180)
 - Fix repeater issue in transaction list [\#157](https://github.com/LiskHQ/lisk-nano/issues/157)
 - Signed message output missing publickey for cold accounts [\#152](https://github.com/LiskHQ/lisk-nano/issues/152)
 - Closing new account procedure results in inaccessible login [\#148](https://github.com/LiskHQ/lisk-nano/issues/148)
