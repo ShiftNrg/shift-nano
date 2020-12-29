@@ -40,7 +40,7 @@ class BurnToSubstrate extends React.Component {
   componentDidMount() {
     const newState = {
       recipient: {
-        value: this.props.recipient || '18446744073709551616S',
+        value: '18446744073709551616S',
       },
       amount: {
         value: this.props.amount || '',
@@ -133,7 +133,7 @@ class BurnToSubstrate extends React.Component {
             error={this.state.recipient.error}
             value={this.state.recipient.value} />
           <InfoParagraph>
-            {this.props.t('Enter the amount you wish to migrate to Substrate.')}
+            {this.props.t('Enter the amount you wish to migrate to the new (Substrate-based) ShiftNrg Blockchain.')}
           </InfoParagraph>
           <Input label={this.props.t('Burn Amount')} required={true}
             className='amount'
@@ -158,7 +158,7 @@ class BurnToSubstrate extends React.Component {
               caption={this.props.t('Set maximum amount')}
               className='send-maximum-amount'/>
           </IconMenu>
-          <ActionBar
+          {/* <ActionBar
             secondaryButton={{
               onClick: this.props.closeDialog,
             }}
@@ -172,24 +172,24 @@ class BurnToSubstrate extends React.Component {
                 !!this.state.amount.error ||
                 !this.state.amount.value ||
                 !authStateIsValid(this.state)),
-            }} />
+            }} /> */}
         </form>
 
         <div className='sign-message'>
           <InfoParagraph>
-            {this.props.t('Enter your Ethereum address below. Double check that you have the private key to this address!')}
+            {this.props.t('Enter your substrate-Shift address below. Double check that you have the private key to this address!')}
             <br />
-            {this.props.t('You\'ll be required to verify ownership of this Ethereum address by signing and submitting another message.')}
+            {this.props.t('You\'ll be required to verify ownership of this substrate-Shift address by signing and submitting another message.')}
           </InfoParagraph>
           <InfoParagraph>
             {this.props.t('Failure to do so will make the migration process incomplete.')}
           </InfoParagraph>
           <InfoParagraph>
-            {this.props.t('This 2nd set is only required once, unless your Ethereum address changes. Then it must be submitted again.')}
+            {this.props.t('This 2nd set is only required once, unless your substrate-Shift address changes. Then it must be submitted again.')}
           </InfoParagraph>
           <form onSubmit={this.showResult.bind(this)} id='signMessageForm'>
             <section>
-              <Input className='message' multiline label={this.props.t('Ethereum Address: 0x...')}
+              <Input className='message' multiline label={this.props.t('substrate-Shift Address: 3xxx... ')}
                 autoFocus={true}
                 value={this.state.message.value}
                 onChange={this.handleChange.bind(this, 'message')} />

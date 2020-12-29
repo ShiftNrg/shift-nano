@@ -2,20 +2,23 @@
 import React from 'react';
 import Input from 'react-toolbox/lib/input';
 import { IconMenu, MenuItem } from 'react-toolbox/lib/menu';
+import Lisk from 'shift-js';
 import { fromRawLsk, toRawLsk } from '../../utils/lsk';
 import AuthInputs from '../authInputs';
 import ActionBar from '../actionBar';
+import InfoParagraph from '../infoParagraph';
+import SignVerifyResult from '../signVerifyResult';
 import { authStatePrefill, authStateIsValid } from '../../utils/form';
 import fees from '../../constants/fees';
 
-import styles from './send.css';
+import styles from './burnToWShift.css';
 
-class Send extends React.Component {
+class BurnToWShift extends React.Component {
   constructor() {
     super();
     this.state = {
       recipient: {
-        value: '',
+        value: '18446744073709551616S',
       },
       amount: {
         value: '',
@@ -24,6 +27,8 @@ class Send extends React.Component {
         value: '',
       },
       fee: fromRawLsk(fees.send),
+      message: { value: '' },
+      result: '',
       ...authStatePrefill(),
     };
     this.inputValidationRegexps = {
@@ -35,7 +40,7 @@ class Send extends React.Component {
   componentDidMount() {
     const newState = {
       recipient: {
-        value: this.props.recipient || '',
+        value: '18446744073709551616S',
       },
       amount: {
         value: this.props.amount || '',
@@ -84,6 +89,28 @@ class Send extends React.Component {
     this.setState({ executed: true });
   }
 
+  sign(message) {
+    // const signedMessage = Lisk.crypto.signMessageWithPassphrase(message,
+    const signedMessage = Lisk.crypto.signMessageWithSecret(message,
+      this.state.passphrase.value);
+    // const result = Lisk.crypto.printSignedMessage(signedMessage);
+    const result = Lisk.crypto.printSignedMessage(message,
+      signedMessage, this.props.account.publicKey);
+    this.setState({ result });
+    return result;
+  }
+
+  showResult(event) {
+    event.preventDefault();
+    const result = this.sign(this.state.message.value);
+    const copied = this.props.copyToClipboard(result, {
+      message: this.props.t('Press #{key} to copy'),
+    });
+    if (copied) {
+      this.props.successToast({ label: this.props.t('Result copied to clipboard') });
+    }
+  }
+
   getMaxAmount() {
     return fromRawLsk(Math.max(0, this.props.account.balance - toRawLsk(this.state.fee)));
   }
@@ -96,13 +123,19 @@ class Send extends React.Component {
     return (
       <div className={`${styles.send} send`}>
         <form onSubmit={this.send.bind(this)}>
-          <Input label={this.props.t('Recipient Address')} required={true}
+          <InfoParagraph>
+            {this.props.t('Abort if address below is not "18446744073709551616S"!')}
+          </InfoParagraph>
+          <Input label={this.props.t('Burn Address')} required={true}
             className='recipient'
-            autoFocus={true}
+            autoFocus={false}
+            readOnly={true}
             error={this.state.recipient.error}
-            value={this.state.recipient.value}
-            onChange={this.handleChange.bind(this, 'recipient')} />
-          <Input label={this.props.t('Transaction Amount')} required={true}
+            value={this.state.recipient.value} />
+          <InfoParagraph>
+            {this.props.t('Enter the amount you wish to migrate to Wrapped Shift.')}
+          </InfoParagraph>
+          <Input label={this.props.t('Burn Amount')} required={true}
             className='amount'
             error={this.state.amount.error}
             value={this.state.amount.value}
@@ -125,12 +158,12 @@ class Send extends React.Component {
               caption={this.props.t('Set maximum amount')}
               className='send-maximum-amount'/>
           </IconMenu>
-          <ActionBar
+          {/* <ActionBar
             secondaryButton={{
               onClick: this.props.closeDialog,
             }}
             primaryButton={{
-              label: this.props.t('Send'),
+              label: this.props.t('Burn-to-Substrate'),
               type: 'submit',
               disabled: (
                 this.state.executed ||
@@ -139,11 +172,58 @@ class Send extends React.Component {
                 !!this.state.amount.error ||
                 !this.state.amount.value ||
                 !authStateIsValid(this.state)),
-            }} />
+            }} /> */}
         </form>
+
+        <div className='sign-message'>
+          <InfoParagraph>
+            {this.props.t('Enter your Ethereum address below. Double check that you have the private key to this address!')}
+            <br />
+            {this.props.t('You\'ll be required to verify ownership of this Ethereum address by signing and submitting another message.')}
+          </InfoParagraph>
+          <InfoParagraph>
+            {this.props.t('Failure to do so will make the migration process incomplete.')}
+          </InfoParagraph>
+          <InfoParagraph>
+            {this.props.t('This 2nd set is only required once, unless your Ethereum address changes. Then it must be submitted again.')}
+          </InfoParagraph>
+          <form onSubmit={this.showResult.bind(this)} id='signMessageForm'>
+            <section>
+              <Input className='message' multiline label={this.props.t('Ethereum Address: 0x...')}
+                autoFocus={true}
+                value={this.state.message.value}
+                onChange={this.handleChange.bind(this, 'message')} />
+              <AuthInputs
+                passphrase={this.state.passphrase}
+                secondPassphrase={this.state.secondPassphrase}
+                onChange={this.handleChange.bind(this)} />
+            </section>
+            {this.state.result ?
+              <SignVerifyResult result={this.state.result} title={this.props.t('Result')} /> :
+              <ActionBar
+                secondaryButton={{
+                  onClick: this.props.closeDialog,
+                }}
+                primaryButton={{
+                  label: this.props.t('Burn, Sign, and Submit 1/2'),
+                  className: 'sign-button',
+                  type: 'submit',
+                  disabled: (!this.state.message.value ||
+                    this.state.result ||
+                    !authStateIsValid(this.state) ||
+                    this.state.executed ||
+                    !!this.state.recipient.error ||
+                    !this.state.recipient.value ||
+                    !!this.state.amount.error ||
+                    !this.state.amount.value ||
+                    !authStateIsValid(this.state)),
+                }} />
+            }
+          </form>
+        </div>
       </div>
     );
   }
 }
 
-export default Send;
+export default BurnToWShift;

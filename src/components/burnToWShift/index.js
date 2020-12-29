@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 
 import { sent } from '../../actions/account';
-import Send from './send';
+import BurnToWShift from './burnToWShift';
 
 const mapStateToProps = state => ({
   account: state.account,
@@ -13,4 +13,4 @@ const mapDispatchToProps = dispatch => ({
   sent: data => dispatch(sent(data)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(Send));
+export default connect(mapStateToProps, mapDispatchToProps)(translate()(BurnToWShift));
