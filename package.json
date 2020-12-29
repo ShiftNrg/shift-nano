@@ -41,6 +41,7 @@
     "copy-to-clipboard": "3.0.8",
     "electron-localshortcut": "^2.0.2",
     "enzyme": "=3.1.0",
+    "ethers": "^5.0.24",
     "flexboxgrid": "=6.3.1",
     "glob": "=7.1.2",
     "hard-source-webpack-plugin": "0.4.11",

@@ -3,6 +3,7 @@ import React from 'react';
 import Input from 'react-toolbox/lib/input';
 import { IconMenu, MenuItem } from 'react-toolbox/lib/menu';
 import Lisk from 'shift-js';
+import { ethers } from 'ethers';
 import { fromRawLsk, toRawLsk } from '../../utils/lsk';
 import AuthInputs from '../authInputs';
 import ActionBar from '../actionBar';
@@ -71,6 +72,8 @@ class BurnToSubstrate extends React.Component {
       return this.props.t('Zero not allowed');
     } else if (name === 'reference' && value.length > 64) {
       return this.props.t('Maximum length of 64 characters is exceeded.');
+    } else if (name === 'message' && ethers.utils.isAddress(value)) {
+      return this.props.t('Not a valid Ethereum address.');
     }
     return undefined;
   }
@@ -185,7 +188,7 @@ class BurnToSubstrate extends React.Component {
             {this.props.t('Failure to do so will make the migration process incomplete.')}
           </InfoParagraph>
           <InfoParagraph>
-            {this.props.t('This 2nd set is only required once, unless your substrate-Shift address changes. Then it must be submitted again.')}
+            {this.props.t('This 2nd step is only required once, unless your substrate-Shift address changes. Then it must be submitted again.')}
           </InfoParagraph>
           <form onSubmit={this.showResult.bind(this)} id='signMessageForm'>
             <section>

@@ -8,8 +8,7 @@ module.exports = {
   testnet: { // network name translation t('Testnet');
     name: 'Testnet',
     testnet: true,
-    ssl: true,
-    port: 443,
+    address: 'http://3.1.196.88:9405',
     code: 1,
   },
   customNode: { // network name translation t('Custom Node');

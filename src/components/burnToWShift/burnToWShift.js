@@ -3,6 +3,7 @@ import React from 'react';
 import Input from 'react-toolbox/lib/input';
 import { IconMenu, MenuItem } from 'react-toolbox/lib/menu';
 import Lisk from 'shift-js';
+import { ethers } from 'ethers';
 import { fromRawLsk, toRawLsk } from '../../utils/lsk';
 import AuthInputs from '../authInputs';
 import ActionBar from '../actionBar';
@@ -71,6 +72,8 @@ class BurnToWShift extends React.Component {
       return this.props.t('Zero not allowed');
     } else if (name === 'reference' && value.length > 64) {
       return this.props.t('Maximum length of 64 characters is exceeded.');
+    } else if (name === 'message' && !ethers.utils.isAddress(value)) {
+      return this.props.t('Not a valid Ethereum address.');
     }
     return undefined;
   }
@@ -173,54 +176,56 @@ class BurnToWShift extends React.Component {
                 !this.state.amount.value ||
                 !authStateIsValid(this.state)),
             }} /> */}
-        </form>
+          {/* </form> */}
 
-        <div className='sign-message'>
-          <InfoParagraph>
-            {this.props.t('Enter your Ethereum address below. Double check that you have the private key to this address!')}
-            <br />
-            {this.props.t('You\'ll be required to verify ownership of this Ethereum address by signing and submitting another message.')}
-          </InfoParagraph>
-          <InfoParagraph>
-            {this.props.t('Failure to do so will make the migration process incomplete.')}
-          </InfoParagraph>
-          <InfoParagraph>
-            {this.props.t('This 2nd set is only required once, unless your Ethereum address changes. Then it must be submitted again.')}
-          </InfoParagraph>
-          <form onSubmit={this.showResult.bind(this)} id='signMessageForm'>
-            <section>
-              <Input className='message' multiline label={this.props.t('Ethereum Address: 0x...')}
-                autoFocus={true}
-                value={this.state.message.value}
-                onChange={this.handleChange.bind(this, 'message')} />
-              <AuthInputs
+          <div className='sign-message'>
+            <InfoParagraph>
+              {this.props.t('Enter your Ethereum address below. Double check that you have the private key to this address!')}
+              <br />
+              {this.props.t('You\'ll be required to verify ownership of this Ethereum address by signing and submitting another message.')}
+            </InfoParagraph>
+            <InfoParagraph>
+              {this.props.t('Failure to do so will make the migration process incomplete.')}
+            </InfoParagraph>
+            <InfoParagraph>
+              {this.props.t('This 2nd step is only required once, unless your Ethereum address changes. Then it must be submitted again.')}
+            </InfoParagraph>
+            <form onSubmit={this.showResult.bind(this)} id='signMessageForm'>
+              <section>
+                <Input className='message' multiline label={this.props.t('Ethereum Address: 0x...')}
+                  autoFocus={true}
+                  value={this.state.message.value}
+                  error={this.state.message.error}
+                  onChange={this.handleChange.bind(this, 'message')} />
+                {/* <AuthInputs
                 passphrase={this.state.passphrase}
                 secondPassphrase={this.state.secondPassphrase}
-                onChange={this.handleChange.bind(this)} />
-            </section>
-            {this.state.result ?
-              <SignVerifyResult result={this.state.result} title={this.props.t('Result')} /> :
-              <ActionBar
-                secondaryButton={{
-                  onClick: this.props.closeDialog,
-                }}
-                primaryButton={{
-                  label: this.props.t('Burn, Sign, and Submit 1/2'),
-                  className: 'sign-button',
-                  type: 'submit',
-                  disabled: (!this.state.message.value ||
+                onChange={this.handleChange.bind(this)} /> */}
+              </section>
+              {this.state.result ?
+                <SignVerifyResult result={this.state.result} title={this.props.t('Result')} /> :
+                <ActionBar
+                  secondaryButton={{
+                    onClick: this.props.closeDialog,
+                  }}
+                  primaryButton={{
+                    label: this.props.t('Burn, Sign, and Submit 1/2'),
+                    className: 'sign-button',
+                    type: 'submit',
+                    disabled: (!this.state.message.value ||
+                    !!this.state.message.error ||
                     this.state.result ||
-                    !authStateIsValid(this.state) ||
                     this.state.executed ||
                     !!this.state.recipient.error ||
                     !this.state.recipient.value ||
                     !!this.state.amount.error ||
                     !this.state.amount.value ||
                     !authStateIsValid(this.state)),
-                }} />
-            }
-          </form>
-        </div>
+                  }} />
+              }
+            </form>
+          </div>
+        </form>
       </div>
     );
   }
