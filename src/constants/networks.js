@@ -1,8 +1,9 @@
 module.exports = {
   mainnet: { // network name translation t('Mainnet');
     name: 'Mainnet',
-    ssl: true,
-    port: 443,
+    // ssl: true,
+    // port: 443,
+    address: 'http://18.222.25.46:9305',
     code: 0,
   },
   testnet: { // network name translation t('Testnet');

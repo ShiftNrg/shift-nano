@@ -1,7 +1,9 @@
+/* eslint-disable no-console */
 /* eslint-disable no-constant-condition */
 import React from 'react';
 import Input from 'react-toolbox/lib/input';
 import { IconMenu, MenuItem } from 'react-toolbox/lib/menu';
+import { Button } from 'react-toolbox/lib/button';
 import Lisk from 'shift-js';
 import { ethers } from 'ethers';
 import { fromRawLsk, toRawLsk } from '../../utils/lsk';
@@ -22,9 +24,6 @@ class BurnToWShift extends React.Component {
         value: '18446744073709551616S',
       },
       amount: {
-        value: '',
-      },
-      reference: {
         value: '',
       },
       fee: fromRawLsk(fees.send),
@@ -70,9 +69,8 @@ class BurnToWShift extends React.Component {
       return this.props.t('Insufficient funds');
     } else if (name === 'amount' && value === '0') {
       return this.props.t('Zero not allowed');
-    } else if (name === 'reference' && value.length > 64) {
-      return this.props.t('Maximum length of 64 characters is exceeded.');
     } else if (name === 'message' && !ethers.utils.isAddress(value)) {
+      this.setState({ result: '' });
       return this.props.t('Not a valid Ethereum address.');
     }
     return undefined;
@@ -87,7 +85,6 @@ class BurnToWShift extends React.Component {
       amount: this.state.amount.value,
       passphrase: this.state.passphrase.value,
       secondPassphrase: this.state.secondPassphrase.value,
-      // data: this.state.reference.value,
     });
     this.setState({ executed: true });
   }
@@ -100,18 +97,18 @@ class BurnToWShift extends React.Component {
     const result = Lisk.crypto.printSignedMessage(message,
       signedMessage, this.props.account.publicKey);
     this.setState({ result });
+    console.log(result);
     return result;
   }
 
-  showResult(event) {
-    event.preventDefault();
-    const result = this.sign(this.state.message.value);
-    const copied = this.props.copyToClipboard(result, {
-      message: this.props.t('Press #{key} to copy'),
-    });
-    if (copied) {
-      this.props.successToast({ label: this.props.t('Result copied to clipboard') });
-    }
+  showResult() {
+    this.sign(this.state.message.value);
+    // const copied = this.props.copyToClipboard(result, {
+    //   message: this.props.t('Press #{key} to copy'),
+    // });
+    // if (copied) {
+    //   this.props.successToast({ label: this.props.t('Result copied to clipboard') });
+    // }
   }
 
   getMaxAmount() {
@@ -143,14 +140,6 @@ class BurnToWShift extends React.Component {
             error={this.state.amount.error}
             value={this.state.amount.value}
             onChange={this.handleChange.bind(this, 'amount')} />
-          <Input
-            label={this.props.t(false ? 'Reference' : '')}
-            required={false}
-            className='reference'
-            style={{ display: false ? '' : 'none' }}
-            error={this.state.reference.error}
-            value={this.state.reference.value}
-            onChange={this.handleChange.bind(this, 'reference')} />
           <AuthInputs
             passphrase={this.state.passphrase}
             secondPassphrase={this.state.secondPassphrase}
@@ -180,7 +169,9 @@ class BurnToWShift extends React.Component {
 
           <div className='sign-message'>
             <InfoParagraph>
-              {this.props.t('Enter your Ethereum address below. Double check that you have the private key to this address!')}
+              {this.props.t('Enter your Ethereum address below. Then click "SIGN".')}
+              <br />
+              {this.props.t('Double check that you have the private key to this address!')}
               <br />
               {this.props.t('You\'ll be required to verify ownership of this Ethereum address by signing and submitting another message.')}
             </InfoParagraph>
@@ -188,42 +179,41 @@ class BurnToWShift extends React.Component {
               {this.props.t('Failure to do so will make the migration process incomplete.')}
             </InfoParagraph>
             <InfoParagraph>
-              {this.props.t('This 2nd step is only required once, unless your Ethereum address changes. Then it must be submitted again.')}
+              {this.props.t('The 2nd step is only required once, unless your Ethereum address changes. Then it must be submitted again.')}
             </InfoParagraph>
-            <form onSubmit={this.showResult.bind(this)} id='signMessageForm'>
-              <section>
-                <Input className='message' multiline label={this.props.t('Ethereum Address: 0x...')}
-                  autoFocus={true}
-                  value={this.state.message.value}
-                  error={this.state.message.error}
-                  onChange={this.handleChange.bind(this, 'message')} />
-                {/* <AuthInputs
+            {/* <form onSubmit={this.showResult.bind(this)} id='signMessageForm'> */}
+            <section>
+              <Input className='message' multiline label={this.props.t('Ethereum Address: 0x...')}
+                autoFocus={true}
+                value={this.state.message.value}
+                error={this.state.message.error}
+                onChange={this.handleChange.bind(this, 'message')} />
+              {/* <AuthInputs
                 passphrase={this.state.passphrase}
                 secondPassphrase={this.state.secondPassphrase}
                 onChange={this.handleChange.bind(this)} /> */}
-              </section>
-              {this.state.result ?
-                <SignVerifyResult result={this.state.result} title={this.props.t('Result')} /> :
-                <ActionBar
-                  secondaryButton={{
-                    onClick: this.props.closeDialog,
-                  }}
-                  primaryButton={{
-                    label: this.props.t('Burn, Sign, and Submit 1/2'),
-                    className: 'sign-button',
-                    type: 'submit',
-                    disabled: (!this.state.message.value ||
+              <Button onClick={this.showResult.bind(this)} label='Sign Message' flat primary />
+            </section>
+            <SignVerifyResult result={this.state.result} title={this.props.t('Result')} />
+
+            {this.state.result ?
+              <ActionBar secondaryButton={{ onClick: this.props.closeDialog }}
+                primaryButton={{
+                  label: this.props.t('Burn SHIFT & Submit Migration Request'),
+                  className: 'sign-button',
+                  type: 'submit',
+                  disabled: (!this.state.message.value ||
                     !!this.state.message.error ||
-                    this.state.result ||
+                    this.state.result === '' ||
                     this.state.executed ||
                     !!this.state.recipient.error ||
                     !this.state.recipient.value ||
                     !!this.state.amount.error ||
                     !this.state.amount.value ||
                     !authStateIsValid(this.state)),
-                  }} />
-              }
-            </form>
+                }} /> : null
+            }
+            {/* </form> */}
           </div>
         </form>
       </div>
