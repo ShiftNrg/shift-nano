@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import i18next from 'i18next';
 import actionTypes from '../constants/actions';
 import { setSecondPassphrase, send } from '../utils/api/account';
@@ -106,8 +107,7 @@ export const delegateRegistered = ({
 /**
  *
  */
-export const sent = ({ activePeer, account, recipientId,
-  amount, passphrase, secondPassphrase/* , data */ }) =>
+export const sent = ({ activePeer, account, recipientId, amount, passphrase, secondPassphrase/* , data */ }) =>
   (dispatch) => {
     loadingStarted('sent');
     send(activePeer, recipientId, toRawLsk(amount), passphrase, secondPassphrase/* , data */)

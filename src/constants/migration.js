@@ -1,9 +1,12 @@
 module.exports = {
   shift_submission: {
-    address: 'https://wshift-migration.shift.network/shiftSig',
+    url: 'https://wshift-migration.shiftnrg.network/shiftSig',
   },
   eth_submission: {
-    address: 'https://wshift-migration.shift.network/ethSig',
+    url: 'https://wshift-migration.shiftnrg.network/ethSig',
+  },
+  get_register_eth_address: {
+    url: 'https://wshift-migration.shiftnrg.network/getEthAddresses',
   },
   signedShiftMessage: {
     signedMessage: {

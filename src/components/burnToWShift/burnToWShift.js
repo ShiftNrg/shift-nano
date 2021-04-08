@@ -13,8 +13,14 @@ import InfoParagraph from '../infoParagraph';
 import SignVerifyResult from '../signVerifyResult';
 import { authStatePrefill, authStateIsValid } from '../../utils/form';
 import fees from '../../constants/fees';
+import migration from '../../constants/migration';
 
 import styles from './burnToWShift.css';
+
+// const Client = require('node-rest-client').Client;
+const axios = require('axios');
+
+// const client = new Client();
 
 class BurnToWShift extends React.Component {
   constructor() {
@@ -29,6 +35,7 @@ class BurnToWShift extends React.Component {
       fee: fromRawLsk(fees.send),
       message: { value: '' },
       result: '',
+      registeredEthAddress: 'Not Registered!',
       ...authStatePrefill(),
     };
     this.inputValidationRegexps = {
@@ -37,7 +44,7 @@ class BurnToWShift extends React.Component {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const newState = {
       recipient: {
         value: '18446744073709551616S',
@@ -49,6 +56,19 @@ class BurnToWShift extends React.Component {
       ...authStatePrefill(this.props.account),
     };
     this.setState(newState);
+    this.getEthAddress();
+  }
+
+  async getEthAddress() {
+    try {
+      console.log(`${migration.get_register_eth_address.url}/${this.props.account.address}`);
+      const url = `${migration.get_register_eth_address.url}/364709217406949292S`;
+      const result = await axios.get(url);
+      const value = result.data.body[0] ? result.data.body[0] : this.state.registeredEthAddress;
+      this.setState({ registeredEthAddress: value });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   handleChange(name, value, error) {
@@ -123,6 +143,9 @@ class BurnToWShift extends React.Component {
     return (
       <div className={`${styles.send} send`}>
         <form onSubmit={this.send.bind(this)}>
+          <InfoParagraph>
+            {this.props.t(`Your Register Ethereum Address is: ${this.state.registeredEthAddress}`)}
+          </InfoParagraph>
           <InfoParagraph>
             {this.props.t('Abort if address below is not "18446744073709551616S"!')}
           </InfoParagraph>
