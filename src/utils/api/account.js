@@ -1,5 +1,10 @@
+/* eslint-disable no-console */
 import Lisk from 'shift-js';
 import { requestToActivePeer } from './peers';
+import migration from '../../constants/migration';
+import { loadingStarted, loadingFinished } from '../../utils/loading';
+
+const axios = require('axios');
 
 export const getAccount = (activePeer, address) =>
   new Promise((resolve, reject) => {
@@ -39,8 +44,7 @@ export const setSecondPassphrase = (activePeer, secondPassphrase, publicKey, pas
     publicKey,
   });
 
-export const send = (activePeer, recipientId, amount,
-  passphrase, secondPassphrase = null/* , data = null */) =>
+export const send = (activePeer, recipientId, amount, passphrase, secondPassphrase = null/* , data = null */) =>
   /*
   new Promise((resolve, reject) => {
     const transaction = Lisk.transaction
@@ -62,6 +66,32 @@ export const send = (activePeer, recipientId, amount,
     secret: passphrase,
     secondSecret: secondPassphrase,
   });
+
+export const sendMigration = async (ethAddress, publicKey, signature, txId) => {
+  const url = migration.get_register_eth_address.url;
+  const payload = migration.signedShiftMessage;
+
+  payload.signedMessage.message = ethAddress;
+  payload.signedMessage.publicKey = publicKey;
+  payload.signedMessage.signature = signature;
+  payload.txIds = [txId];
+
+  loadingStarted();
+  try {
+    console.log(url);
+    console.log(JSON.stringify(payload));
+
+    const result = await axios.post(url, payload);
+    console.log(result);
+
+    loadingFinished();
+
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+  return null;
+};
 
 export const transactions = (activePeer, address, limit = 20, offset = 0, orderBy = 'timestamp:desc') =>
   requestToActivePeer(activePeer, 'transactions', {

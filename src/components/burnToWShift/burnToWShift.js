@@ -14,13 +14,9 @@ import SignVerifyResult from '../signVerifyResult';
 import { authStatePrefill, authStateIsValid } from '../../utils/form';
 import fees from '../../constants/fees';
 import migration from '../../constants/migration';
-
 import styles from './burnToWShift.css';
 
-// const Client = require('node-rest-client').Client;
 const axios = require('axios');
-
-// const client = new Client();
 
 class BurnToWShift extends React.Component {
   constructor() {
@@ -98,7 +94,7 @@ class BurnToWShift extends React.Component {
 
   send(event) {
     event.preventDefault();
-    this.props.sent({
+    this.props.sentMigration({
       activePeer: this.props.activePeer,
       account: this.props.account,
       recipientId: this.state.recipient.value,
@@ -116,8 +112,13 @@ class BurnToWShift extends React.Component {
     // const result = Lisk.crypto.printSignedMessage(signedMessage);
     const result = Lisk.crypto.printSignedMessage(message,
       signedMessage, this.props.account.publicKey);
-    this.setState({ result });
-    console.log(result);
+
+    const account = this.props.account;
+    account.signedMessage = signedMessage;
+    account.message = message;
+
+    this.setState({ result, account });
+    // console.log(result);
     return result;
   }
 
@@ -168,7 +169,8 @@ class BurnToWShift extends React.Component {
             secondPassphrase={this.state.secondPassphrase}
             onChange={this.handleChange.bind(this)} />
           <div className={styles.fee}> {this.props.t('Fee: {{fee}} SHIFT', { fee: this.state.fee })} </div>
-          <IconMenu icon='more_vert' position='topRight' menuRipple className={`${styles.sendAllMenu} transaction-amount`} >
+          <IconMenu icon='more_vert' position='topRight'
+            menuRipple className={`${styles.sendAllMenu} transaction-amount`} >
             <MenuItem onClick={this.setMaxAmount.bind(this)}
               caption={this.props.t('Set maximum amount')}
               className='send-maximum-amount'/>
@@ -220,7 +222,8 @@ class BurnToWShift extends React.Component {
             <SignVerifyResult result={this.state.result} title={this.props.t('Result')} />
 
             {this.state.result ?
-              <ActionBar secondaryButton={{ onClick: this.props.closeDialog }}
+              <ActionBar
+                secondaryButton={{ onClick: this.props.closeDialog }}
                 primaryButton={{
                   label: this.props.t('Burn SHIFT & Submit Migration Request'),
                   className: 'sign-button',

@@ -5,9 +5,7 @@ import grid from 'flexboxgrid/dist/flexboxgrid.css';
 import PricedButton from '../pricedButton';
 import styles from './actionBar.css';
 
-export const ActionBarRaw = ({
-  secondaryButton, primaryButton, account, t,
-}) => (
+export const ActionBarRaw = ({ secondaryButton, primaryButton, account, t }) => (
   <section className={`${grid.row} ${grid['between-xs']} ${styles.wrapper}`} >
     <Button
       label={secondaryButton.label || t('Cancel')}

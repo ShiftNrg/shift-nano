@@ -4,9 +4,7 @@ import Button from 'react-toolbox/lib/button';
 import { fromRawLsk } from '../../utils/lsk';
 import styles from './pricedButton.css';
 
-export const PricedButtonComponent = ({
-  balance, fee, label, customClassName, onClick, disabled, type, t,
-}) => {
+export const PricedButtonComponent = ({ balance, fee, label, customClassName, onClick, disabled, type, t }) => {
   const hasFunds = balance >= fee;
   return (
     <div className='primary-button'>

@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import i18next from 'i18next';
 import actionTypes from '../constants/actions';
-import { setSecondPassphrase, send } from '../utils/api/account';
+import { setSecondPassphrase, send, sendMigration } from '../utils/api/account';
 import { registerDelegate } from '../utils/api/delegate';
 import { transactionAdded } from './transactions';
 import { errorAlertDialogDisplayed } from './dialog';
@@ -46,6 +46,21 @@ export const accountLoggedIn = data => ({
 
 export const passphraseUsed = data => ({
   type: actionTypes.passphraseUsed,
+  data,
+});
+
+export const migrationSent = data => ({
+  type: actionTypes.migrationSent,
+  data,
+});
+
+export const migrationReceived = data => ({
+  type: actionTypes.migrationSent,
+  data,
+});
+
+export const migrationFailed = data => ({
+  type: actionTypes.migrationSent,
   data,
 });
 
@@ -105,7 +120,7 @@ export const delegateRegistered = ({
   };
 
 /**
- *
+ * This is the default method used for sending SHIFT
  */
 export const sent = ({ activePeer, account, recipientId, amount, passphrase, secondPassphrase/* , data */ }) =>
   (dispatch) => {
@@ -127,6 +142,53 @@ export const sent = ({ activePeer, account, recipientId, amount, passphrase, sec
         loadingFinished('sent');
         const text = error && error.message ? `${error.message}.` : i18next.t('An error occurred while creating the transaction.');
         dispatch(errorAlertDialogDisplayed({ text }));
+      });
+    dispatch(passphraseUsed(passphrase));
+  };
+
+  /**
+   * 
+   * @param {*} param0 
+   * @returns 
+   */
+export const sentMigration = ({ activePeer, account, recipientId, amount, passphrase, secondPassphrase/* , data */ }) =>
+  (dispatch) => {
+    loadingStarted('sent');
+    send(activePeer, recipientId, toRawLsk(amount), passphrase, secondPassphrase/* , data */)
+      .then((res) => {
+        loadingFinished('sent');
+        // eslint-disable-next-line no-console
+        console.log(`tx id: ${res.id}`);
+        dispatch(transactionAdded({
+          id: res.id,
+          senderPublicKey: account.publicKey,
+          senderId: account.address,
+          recipientId,
+          amount: toRawLsk(amount),
+          fee: Fees.send,
+          type: transactionTypes.send,
+        }));
+        return res.id;
+      })
+      .catch((error) => {
+        loadingFinished('sent');
+        const text = error && error.message ? `${error.message}.` : i18next.t('An error occurred while creating the transaction.');
+        dispatch(errorAlertDialogDisplayed({ text }));
+      })
+      .then((res) => {
+        // eslint-disable-next-line no-console
+        console.log(`hey this is my result: ${res}`);
+
+        dispatch(migrationSent());
+        sendMigration(account.message, account.publicKey, account.signedMessage, res)
+          .then((result) => {
+            dispatch(migrationReceived());
+            console.log(result);
+          })
+          .catch((error) => {
+            dispatch(migrationFailed());
+            console.log(error);
+          });
       });
     dispatch(passphraseUsed(passphrase));
   };
