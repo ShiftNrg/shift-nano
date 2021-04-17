@@ -67,21 +67,26 @@ export const send = (activePeer, recipientId, amount, passphrase, secondPassphra
     secondSecret: secondPassphrase,
   });
 
+// eslint-disable-next-line no-unused-vars
 export const sendMigration = async (ethAddress, publicKey, signature, txId) => {
-  const url = migration.get_register_eth_address.url;
+  const url = migration.shift_submission.url;
   const payload = migration.signedShiftMessage;
 
   payload.signedMessage.message = ethAddress;
   payload.signedMessage.publicKey = publicKey;
   payload.signedMessage.signature = signature;
-  payload.txIds = [txId];
+  payload.txIds = ['12438201776582874378'];
 
   loadingStarted();
   try {
     console.log(url);
     console.log(JSON.stringify(payload));
 
-    const result = await axios.post(url, payload);
+    const result = await axios.post(url, JSON.stringify(payload), {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     console.log(result);
 
     loadingFinished();
