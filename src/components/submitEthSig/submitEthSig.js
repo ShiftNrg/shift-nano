@@ -2,13 +2,11 @@
 /* eslint-disable no-constant-condition */
 import React from 'react';
 import Input from 'react-toolbox/lib/input';
-import { ethers } from 'ethers';
 import ActionBar from '../actionBar';
 import InfoParagraph from '../infoParagraph';
-import { authStatePrefill, authStateIsValid } from '../../utils/form';
+import { authStatePrefill } from '../../utils/form';
 import migration from '../../constants/migration';
 import styles from './submitEthSig.css';
-import sendEthSig from '../../utils/api/account';
 
 const axios = require('axios');
 
@@ -16,14 +14,13 @@ class SubmitEthSig extends React.Component {
   constructor() {
     super();
     this.state = {
+      // eslint-disable-next-line no-useless-concat
+      // message: { value: '{ "address": "0x1cf6119fe0cb30f7ceca279836b67988ec4d1152", "msg": "8065339284245106210S", "sig":' +
+      // '"0xae5c680f47a871a14a144134437d790a7b9e7d1c6d8f34e7acefc241519922fb1f3e2996463d327c74a12dab79157635b1e50836a9bcfb8efe9d40680684111600", "version": "3", "signer": "ledger" }' },
       message: { value: '' },
       result: '',
       registeredEthAddress: 'Not Registered!',
       ...authStatePrefill(),
-    };
-    this.inputValidationRegexps = {
-      recipient: /^\d{1,21}[S|s]$/,
-      amount: /^\d+(\.\d{1,8})?$/,
     };
   }
 
@@ -56,27 +53,43 @@ class SubmitEthSig extends React.Component {
   }
 
   validateInput(name, value) {
-    if (!value && name !== 'reference') {
-      return this.props.t('Required');
-    } else if (!value.match(this.inputValidationRegexps[name])) {
-      return this.props.t('Invalid');
-    } else if (name === 'amount' && value > parseFloat(this.getMaxAmount())) {
-      return this.props.t('Insufficient funds');
-    } else if (name === 'amount' && value === '0') {
-      return this.props.t('Zero not allowed');
-    } else if (name === 'message' && !ethers.utils.isAddress(value)) {
+    if (name === 'message' && value.length < 80) {
       this.setState({ result: '' });
       return this.props.t('Not a valid Ethereum address.');
     }
     return undefined;
   }
 
-  async submit(event) {
+  submit(event) {
     event.preventDefault();
-    const result = await sendEthSig();
+    const result = this.submitSignedEthMessage();
     console.log(result);
     this.setState({ executed: true });
   }
+
+
+  async submitSignedEthMessage() {
+    const url = migration.eth_submission.url;
+    const payload = this.state.message.value;
+
+    let result = null;
+
+    try {
+      console.log(url);
+      console.log(JSON.stringify(payload).replace(/\\/g, ''));
+
+      result = await axios.post(url, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log(result);
+    } catch (error) {
+      console.error(error);
+    }
+    return result;
+  }
+
 
   render() {
     return (
@@ -96,24 +109,16 @@ class SubmitEthSig extends React.Component {
               {this.props.t('This current step is only required once, unless your Ethereum address changes. Then it must be submitted again.')}
             </InfoParagraph>
             <section>
-              <Input className='message' multiline label={this.props.t('Ethereum Address: 0x...')}
+              <Input className='message' multiline={true} label={this.props.t('Ethereum Signed Message: {...}')}
                 autoFocus={true}
                 value={this.state.message.value}
                 error={this.state.message.error}
                 onChange={this.handleChange.bind(this, 'message')} />
             </section>
 
-            {this.state.result ?
-              <ActionBar
-                secondaryButton={{ onClick: this.props.closeDialog }}
-                primaryButton={{
-                  label: this.props.t('Burn SHIFT & Submit Migration Request'),
-                  className: 'sign-button',
-                  type: 'submit',
-                  disabled: (!this.state.message.value || !!this.state.message.error ||
-                    this.state.result === '' || this.state.executed || !authStateIsValid(this.state)),
-                }} /> : null
-            }
+            <ActionBar secondaryButton={{ onClick: this.props.closeDialog }}
+              primaryButton={{ label: this.props.t('Submit'), className: 'submit-button', type: 'submit', disabled: (!this.state.message.value),
+              }} />
           </div>
         </form>
       </div>

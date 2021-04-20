@@ -58,6 +58,7 @@
   "Entered passphrase does not belong to the active account": "Entered passphrase does not belong to the active account",
   "Error": "Error",
   "Ethereum Address: 0x...": "Ethereum Address: 0x...",
+  "Ethereum Signed Message: {...}": "Ethereum Signed Message: {...}",
   "Failed to connect to node {{address}}": "Failed to connect to node {{address}}",
   "Failed to connect: Node {{address}} is not active": "Failed to connect: Node {{address}} is not active",
   "Failure to do so will make the migration process incomplete.": "Failure to do so will make the migration process incomplete.",

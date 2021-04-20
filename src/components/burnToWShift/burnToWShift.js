@@ -169,33 +169,20 @@ class BurnToWShift extends React.Component {
             readOnly={true}
             error={this.state.recipient.error}
             value={this.state.recipient.value} />
+
           <AuthInputs
             passphrase={this.state.passphrase}
             secondPassphrase={this.state.secondPassphrase}
             onChange={this.handleChange.bind(this)} />
+
           <div className={styles.fee}> {this.props.t('Fee: {{fee}} SHIFT', { fee: this.state.fee })} </div>
+
           <IconMenu icon='more_vert' position='topRight'
             menuRipple className={`${styles.sendAllMenu} transaction-amount`} >
             <MenuItem onClick={this.setMaxAmount.bind(this)}
               caption={this.props.t('Set maximum amount')}
               className='send-maximum-amount'/>
           </IconMenu>
-          {/* <ActionBar
-            secondaryButton={{
-              onClick: this.props.closeDialog,
-            }}
-            primaryButton={{
-              label: this.props.t('Burn-to-Substrate'),
-              type: 'submit',
-              disabled: (
-                this.state.executed ||
-                !!this.state.recipient.error ||
-                !this.state.recipient.value ||
-                !!this.state.amount.error ||
-                !this.state.amount.value ||
-                !authStateIsValid(this.state)),
-            }} /> */}
-          {/* </form> */}
 
           <div className='sign-message'>
             <InfoParagraph>
@@ -211,17 +198,14 @@ class BurnToWShift extends React.Component {
             <InfoParagraph>
               {this.props.t('The 2nd step is only required once, unless your Ethereum address changes. Then it must be submitted again.')}
             </InfoParagraph>
-            {/* <form onSubmit={this.showResult.bind(this)} id='signMessageForm'> */}
+
             <section>
               <Input className='message' multiline label={this.props.t('Ethereum Address: 0x...')}
                 autoFocus={true}
                 value={this.state.message.value}
                 error={this.state.message.error}
                 onChange={this.handleChange.bind(this, 'message')} />
-              {/* <AuthInputs
-                passphrase={this.state.passphrase}
-                secondPassphrase={this.state.secondPassphrase}
-                onChange={this.handleChange.bind(this)} /> */}
+
               <Button onClick={this.showResult.bind(this)} label='Sign Message' flat primary />
             </section>
             <SignVerifyResult result={this.state.result} title={this.props.t('Result')} />
@@ -244,7 +228,6 @@ class BurnToWShift extends React.Component {
                     !authStateIsValid(this.state)),
                 }} /> : null
             }
-            {/* </form> */}
           </div>
         </form>
       </div>
