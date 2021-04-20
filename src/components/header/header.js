@@ -53,10 +53,6 @@ const Header = props => (
         </MenuItem>
         <MenuDivider />
         <MenuItem theme={styles}>
-          <RelativeLink className={`submit-ethSig ${styles.menuLink}`}
-            to='submit-ethSig'>{props.t('Submit-Eth-Sig')}</RelativeLink>
-        </MenuItem>
-        <MenuItem theme={styles}>
           <RelativeLink className={`burn-wshift ${styles.menuLink}`}
             to='burn-wshift'>{props.t('Migrate-to-wSHIFT')}</RelativeLink>
         </MenuItem>
@@ -64,6 +60,10 @@ const Header = props => (
           <RelativeLink className={`burn-substrate ${styles.menuLink}`} to='burn-substrate'>
             {props.t('Migrate-to-Substrate')}
           </RelativeLink>
+        </MenuItem>
+        <MenuItem theme={styles}>
+          <RelativeLink className={`submit-ethSig ${styles.menuLink}`}
+            to='submit-ethSig'>{props.t('Submit-Eth-Sig')}</RelativeLink>
         </MenuItem>
         <MenuDivider />
         <MenuItem theme={styles}>

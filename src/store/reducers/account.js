@@ -63,13 +63,13 @@ const account = (state = {}, action) => {
     case actionTypes.migrationSend:
       return {
         ...state,
-        migrationTxId: action.data.migrationTxId ? action.data.migrationTxId : 0,
+        migrationTxIds: action.data.migrationTxIds ? action.data.migrationTxIds : 0,
       };
     case actionTypes.migrationSent:
       return {
         ...state,
         pendingShiftMigration: false,
-        migrationTxId: null,
+        migrationTxIds: null,
         signedMessage: null,
         message: null,
       };

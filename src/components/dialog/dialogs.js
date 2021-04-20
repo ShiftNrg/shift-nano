@@ -64,10 +64,6 @@ export default () => ({
     title: i18next.t('Decrypt message'),
     component: DecryptMessage,
   },
-  'submit-ethSig': {
-    title: i18next.t('Submit-Eth-Sig'),
-    component: SubmitEthSig,
-  },
   'burn-wshift': {
     title: i18next.t('Burn-to-wSHIFT'),
     component: BurnToWShift,
@@ -75,5 +71,9 @@ export default () => ({
   'burn-substrate': {
     title: i18next.t('Burn-to-Substrate'),
     component: BurnToSubstrate,
+  },
+  'submit-ethSig': {
+    title: i18next.t('Submit-Eth-Sig'),
+    component: SubmitEthSig,
   },
 });

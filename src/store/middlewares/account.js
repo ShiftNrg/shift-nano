@@ -11,6 +11,7 @@ import { fetchAndUpdateForgedBlocks } from '../../actions/forging';
 import { getDelegate } from '../../utils/api/delegate';
 import transactionTypes from '../../constants/transactionTypes';
 import { loadingStarted, loadingFinished } from '../../utils/loading';
+import { successToastDisplayed, errorToastDisplayed } from '../../actions/toaster';
 
 const updateTransactions = (store, peers, account) => {
   loadingStarted('updateTransactions');
@@ -31,12 +32,19 @@ const updateTransactions = (store, peers, account) => {
 
         // might have to loop through last 5-10 tx and send any tx id that match
         console.log(JSON.stringify(transactions.confirmed[0]));
-        const burnedTx = transactions.confirmed[0];
-        if (burnedTx.recipientId === '18446744073709551616S') {
-          const txId = burnedTx.id;
-          console.log(`tx id from account middleware: ${txId}`);
-          store.dispatch(migrationSend({ migrationTxId: txId })); // dispatch event w/ new data for new state
+        // const burnedTx = transactions.confirmed[0];
+        const txIds = [];
+
+        for (let i = 10; i >= 0; i--) {
+          if (transactions.confirmed[i]) {
+            const burnedTx = transactions.confirmed[i];
+            if (burnedTx.recipientId === '18446744073709551616S') {
+              txIds.push(burnedTx.id);
+              console.log(`tx id from account middleware: ${burnedTx.id}`);
+            }
+          }
         }
+        store.dispatch(migrationSend({ migrationTxIds: txIds })); // dispatch event w/ new data for new state
         // store.dispatch(EVENT(data)); // dispatch event w/ new data for new state
       }
     });
@@ -124,11 +132,11 @@ const passphraseUsed = (store, action) => {
 const submitBurnedMigration = async (store, action) => {
   const { account } = store.getState();
 
-  const txId = account.migrationTxId;
+  const txIds = account.migrationTxIds;
   // console.log(JSON.stringify(txId));
   store.dispatch(migrationSent());
 
-  sendMigration(account.message, account.publicKey, account.signedMessage, txId)
+  sendMigration(account.message, account.publicKey, account.signedMessage, txIds)
     .then((result) => {
       store.dispatch(migrationReceived());
       // eslint-disable-next-line no-console
@@ -171,7 +179,7 @@ const checkTransactionsAndUpdateAccount = (store, action) => {
   //   if (burnedTx.recipientId === '18446744073709551616S') {
   //     const txId = burnedTx.id;
   //     console.log(`tx id from account middleware: ${txId}`);
-  //     store.dispatch(migrationSend({ migrationTxId: txId })); // dispatch event w/ new data for new state
+  //     store.dispatch(migrationSend({ migrationTxIds: txId })); // dispatch event w/ new data for new state
   //   }
   //   // store.dispatch(EVENT(data)); // dispatch event w/ new data for new state
   // }
@@ -206,9 +214,13 @@ const accountMiddleware = store => next => (action) => {
     case actionTypes.migrationSend:
       submitBurnedMigration(store, action);
       break;
-    // case actionTypes.migrationReceived:
-    //   showMigrationDialog(store, action);
-    //   break;
+    case actionTypes.migrationReceived:
+      // showMigrationDialog(store, action); // won't close? fml
+      store.dispatch(successToastDisplayed({ label: i18next.t('Shift Migration Request: Success!') }));
+      break;
+    case actionTypes.migrationFailed:
+      store.dispatch(errorToastDisplayed({ label: i18next.t('Shift Migration Request: Failed!') }));
+      break;
     default: break;
   }
 };

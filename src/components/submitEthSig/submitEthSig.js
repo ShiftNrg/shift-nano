@@ -14,9 +14,6 @@ class SubmitEthSig extends React.Component {
   constructor() {
     super();
     this.state = {
-      // eslint-disable-next-line no-useless-concat
-      // message: { value: '{ "address": "0x1cf6119fe0cb30f7ceca279836b67988ec4d1152", "msg": "8065339284245106210S", "sig":' +
-      // '"0xae5c680f47a871a14a144134437d790a7b9e7d1c6d8f34e7acefc241519922fb1f3e2996463d327c74a12dab79157635b1e50836a9bcfb8efe9d40680684111600", "version": "3", "signer": "ledger" }' },
       message: { value: '' },
       result: '',
       registeredEthAddress: 'Not Registered!',
@@ -40,6 +37,7 @@ class SubmitEthSig extends React.Component {
       this.setState({ registeredEthAddress: value });
     } catch (error) {
       // console.error(error);
+      this.props.errorToast({ label: this.props.t('API: Fetch ETH address failed') });
     }
   }
 
@@ -55,15 +53,16 @@ class SubmitEthSig extends React.Component {
   validateInput(name, value) {
     if (name === 'message' && value.length < 80) {
       this.setState({ result: '' });
-      return this.props.t('Not a valid Ethereum address.');
+      return this.props.t('Double check message!');
     }
     return undefined;
   }
 
   submit(event) {
     event.preventDefault();
+    // eslint-disable-next-line no-unused-vars
     const result = this.submitSignedEthMessage();
-    console.log(result);
+    // console.log(result);
     this.setState({ executed: true });
   }
 
@@ -83,9 +82,16 @@ class SubmitEthSig extends React.Component {
           'Content-Type': 'application/json',
         },
       });
+
       console.log(result);
+      this.props.successToast({ label: this.props.t('Processing...') });
+      this.props.successToast({ label: this.props.t('Eth Sig Submission Successful') });
+      this.props.closeDialog();
     } catch (error) {
       console.error(error);
+      this.props.errorToast({ label: this.props.t('Check message and try again') });
+      this.props.errorToast({ label: this.props.t('Eth Sig Submission NOT Successful') });
+      this.props.closeDialog();
     }
     return result;
   }
