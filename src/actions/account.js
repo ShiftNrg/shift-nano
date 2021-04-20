@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import i18next from 'i18next';
 import actionTypes from '../constants/actions';
-import { setSecondPassphrase, send, sendMigration } from '../utils/api/account';
+import { setSecondPassphrase, send } from '../utils/api/account';
 import { registerDelegate } from '../utils/api/delegate';
 import { transactionAdded } from './transactions';
 import { errorAlertDialogDisplayed } from './dialog';
@@ -9,6 +9,11 @@ import Fees from '../constants/fees';
 import { toRawLsk } from '../utils/lsk';
 import transactionTypes from '../constants/transactionTypes';
 import { loadingStarted, loadingFinished } from '../utils/loading';
+
+// eslint-disable-next-line no-unused-vars
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 /**
  * Trigger this action to update the account object
@@ -49,18 +54,23 @@ export const passphraseUsed = data => ({
   data,
 });
 
+export const migrationSend = data => ({
+  type: actionTypes.migrationSend,
+  data,
+});
+
 export const migrationSent = data => ({
   type: actionTypes.migrationSent,
   data,
 });
 
 export const migrationReceived = data => ({
-  type: actionTypes.migrationSent,
+  type: actionTypes.migrationReceived,
   data,
 });
 
 export const migrationFailed = data => ({
-  type: actionTypes.migrationSent,
+  type: actionTypes.migrationFailed,
   data,
 });
 
@@ -155,10 +165,8 @@ export const sentMigration = ({ activePeer, account, recipientId, amount, passph
   (dispatch) => {
     loadingStarted('sent');
     send(activePeer, recipientId, toRawLsk(amount), passphrase, secondPassphrase/* , data */)
-      .then((res) => {
+      .then(async (res) => {
         loadingFinished('sent');
-        // eslint-disable-next-line no-console
-        console.log(`tx id: ${res.id}`);
         dispatch(transactionAdded({
           id: res.id,
           senderPublicKey: account.publicKey,
@@ -168,27 +176,25 @@ export const sentMigration = ({ activePeer, account, recipientId, amount, passph
           fee: Fees.send,
           type: transactionTypes.send,
         }));
-        return res.id;
+        return res;
       })
       .catch((error) => {
         loadingFinished('sent');
         const text = error && error.message ? `${error.message}.` : i18next.t('An error occurred while creating the transaction.');
         dispatch(errorAlertDialogDisplayed({ text }));
-      })
-      .then((res) => {
-        // eslint-disable-next-line no-console
-        console.log(`hey this is my result: ${res}`);
-
-        dispatch(migrationSent());
-        sendMigration(account.message, account.publicKey, account.signedMessage, res)
-          .then((result) => {
-            dispatch(migrationReceived());
-            console.log(result);
-          })
-          .catch((error) => {
-            dispatch(migrationFailed());
-            console.log(error);
-          });
       });
+    // .then((res) => {
+    //   dispatch(migrationSent());
+    //   sendMigration(account.message, account.publicKey, account.signedMessage)
+    //     .then((result) => {
+    //       dispatch(migrationReceived());
+    //       console.log(JSON.stringify(res));
+    //       console.log(result);
+    //     })
+    //     .catch((error) => {
+    //       dispatch(migrationFailed());
+    //       console.log(error);
+    //     });
+    // });
     dispatch(passphraseUsed(passphrase));
   };

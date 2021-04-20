@@ -52,8 +52,11 @@ class Transactions extends React.Component {
           </table> :
           <p className={`${styles.empty} hasPaddingRow empty-message`}>
             {this.props.t('There are no transactions, yet.')} &nbsp;
-            <RelativeLink className={`${styles.button} ${buttonStyle.button} ${buttonStyle.primary} ${buttonStyle.raised} receive-lsk-button ${offlineStyle.disableWhenOffline}`}
-              to='receive'>{this.props.t('Receive SHIFT')}</RelativeLink>
+
+            <RelativeLink className={`${styles.button} ${buttonStyle.button} ${buttonStyle.primary} 
+              ${buttonStyle.raised} receive-lsk-button ${offlineStyle.disableWhenOffline}`} to='receive'>
+              {this.props.t('Receive SHIFT')}
+            </RelativeLink>
           </p>
         }
         <Waypoint bottomOffset='-80%'

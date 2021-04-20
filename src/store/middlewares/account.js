@@ -1,5 +1,6 @@
-import { getAccount, transactions as getTransactions } from '../../utils/api/account';
-import { accountUpdated, accountLoggedIn } from '../../actions/account';
+import { getAccount, transactions as getTransactions, sendMigration } from '../../utils/api/account';
+// eslint-disable-next-line max-len
+import { accountUpdated, accountLoggedIn, migrationSend, migrationSent, migrationReceived, migrationFailed } from '../../actions/account';
 import { transactionsUpdated } from '../../actions/transactions';
 import { activePeerUpdate } from '../../actions/peers';
 import { votesFetched } from '../../actions/voting';
@@ -19,6 +20,23 @@ const updateTransactions = (store, peers, account) => {
         confirmed: response.transactions,
         count: parseInt(response.count, 10),
       }));
+    })
+    .then(() => {
+      // check for pending shift migration burn tx
+      if (account.pendingShiftMigration) {
+        const state = store.getState();
+        const { transactions } = state;
+
+        // might have to loop through last 5-10 tx and send any tx id that match
+        console.log(JSON.stringify(transactions.confirmed[0]));
+        const burnedTx = transactions.confirmed[0];
+        if (burnedTx.recipientId === '18446744073709551616S') {
+          const txId = burnedTx.id;
+          console.log(`tx id from account middleware: ${txId}`);
+          store.dispatch(migrationSend({ migrationTxId: txId })); // dispatch event w/ new data for new state
+        }
+        // store.dispatch(EVENT(data)); // dispatch event w/ new data for new state
+      }
     });
 };
 
@@ -99,6 +117,27 @@ const passphraseUsed = (store, action) => {
   }
 };
 
+
+const submitBurnedMigration = async (store) => {
+  const { account } = store.getState();
+
+  const txId = account.migrationTxId;
+  // console.log(JSON.stringify(txId));
+  store.dispatch(migrationSent());
+
+  sendMigration(account.message, account.publicKey, account.signedMessage, txId)
+    .then((result) => {
+      store.dispatch(migrationReceived());
+      // eslint-disable-next-line no-console
+      console.log(JSON.stringify(result));
+    })
+    .catch((error) => {
+      store.dispatch(migrationFailed());
+      // eslint-disable-next-line no-console
+      console.log(error);
+    });
+};
+
 const checkTransactionsAndUpdateAccount = (store, action) => {
   const state = store.getState();
   const { peers, account, transactions } = state;
@@ -120,6 +159,19 @@ const checkTransactionsAndUpdateAccount = (store, action) => {
   if (blockContainsRelevantTransaction) {
     updateAccountData(store, action);
   }
+
+  // // check for pending shift migration burn tx
+  // if (account.pendingShiftMigration) {
+  //   // might have to loop through last 5-10 tx and send any tx id that match
+  //   console.log(JSON.stringify(transactions.confirmed[0]));
+  //   const burnedTx = transactions.confirmed[0];
+  //   if (burnedTx.recipientId === '18446744073709551616S') {
+  //     const txId = burnedTx.id;
+  //     console.log(`tx id from account middleware: ${txId}`);
+  //     store.dispatch(migrationSend({ migrationTxId: txId })); // dispatch event w/ new data for new state
+  //   }
+  //   // store.dispatch(EVENT(data)); // dispatch event w/ new data for new state
+  // }
 };
 
 const accountMiddleware = store => next => (action) => {
@@ -140,6 +192,9 @@ const accountMiddleware = store => next => (action) => {
       break;
     case actionTypes.passphraseUsed:
       passphraseUsed(store, action);
+      break;
+    case actionTypes.migrationSend:
+      submitBurnedMigration(store);
       break;
     default: break;
   }

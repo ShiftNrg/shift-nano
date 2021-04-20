@@ -57,13 +57,13 @@ class BurnToWShift extends React.Component {
 
   async getEthAddress() {
     try {
-      console.log(`${migration.get_register_eth_address.url}/${this.props.account.address}`);
-      const url = `${migration.get_register_eth_address.url}/364709217406949292S`;
+      const url = `${migration.get_register_eth_address.url}/${this.props.account.address}`;
+      // console.log(url);
       const result = await axios.get(url);
       const value = result.data.body[0] ? result.data.body[0] : this.state.registeredEthAddress;
       this.setState({ registeredEthAddress: value });
     } catch (error) {
-      console.error(error);
+      // console.error(error);
     }
   }
 
@@ -116,6 +116,7 @@ class BurnToWShift extends React.Component {
     const account = this.props.account;
     account.signedMessage = signedMessage;
     account.message = message;
+    account.pendingShiftMigration = true;
 
     this.setState({ result, account });
     // console.log(result);
@@ -145,25 +146,29 @@ class BurnToWShift extends React.Component {
       <div className={`${styles.send} send`}>
         <form onSubmit={this.send.bind(this)}>
           <InfoParagraph>
-            {this.props.t(`Your Register Ethereum Address is: ${this.state.registeredEthAddress}`)}
+            {this.props.t('Enter the amount you wish to migrate to Wrapped Shift.')}
           </InfoParagraph>
+
+          <Input label={this.props.t('Burn Amount')} required={true}
+            className='amount'
+            error={this.state.amount.error}
+            value={this.state.amount.value}
+            onChange={this.handleChange.bind(this, 'amount')} />
+
           <InfoParagraph>
-            {this.props.t('Abort if address below is not "18446744073709551616S"!')}
+            {this.props.t(`Your registered Ethereum Address is: ${this.state.registeredEthAddress}`)}
           </InfoParagraph>
+
+          <InfoParagraph>
+            {this.props.t('Abort if the address below is not "18446744073709551616S"!')}
+          </InfoParagraph>
+
           <Input label={this.props.t('Burn Address')} required={true}
             className='recipient'
             autoFocus={false}
             readOnly={true}
             error={this.state.recipient.error}
             value={this.state.recipient.value} />
-          <InfoParagraph>
-            {this.props.t('Enter the amount you wish to migrate to Wrapped Shift.')}
-          </InfoParagraph>
-          <Input label={this.props.t('Burn Amount')} required={true}
-            className='amount'
-            error={this.state.amount.error}
-            value={this.state.amount.value}
-            onChange={this.handleChange.bind(this, 'amount')} />
           <AuthInputs
             passphrase={this.state.passphrase}
             secondPassphrase={this.state.secondPassphrase}
@@ -194,7 +199,7 @@ class BurnToWShift extends React.Component {
 
           <div className='sign-message'>
             <InfoParagraph>
-              {this.props.t('Enter your Ethereum address below. Then click "SIGN".')}
+              {this.props.t('Enter your Ethereum address below. Then click "Sign Message".')}
               <br />
               {this.props.t('Double check that you have the private key to this address!')}
               <br />

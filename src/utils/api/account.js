@@ -72,30 +72,53 @@ export const sendMigration = async (ethAddress, publicKey, signature, txId) => {
   const url = migration.shift_submission.url;
   const payload = migration.signedShiftMessage;
 
+  let result = null;
+
   payload.signedMessage.message = ethAddress;
   payload.signedMessage.publicKey = publicKey;
   payload.signedMessage.signature = signature;
-  payload.txIds = ['12438201776582874378'];
+  payload.txIds = [txId];
+
+  loadingStarted();
+  try {
+    // console.log(url);
+    // console.log(JSON.stringify(payload));
+
+    result = await axios.post(url, JSON.stringify(payload), {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    // console.log(result);
+  } catch (error) {
+    // console.error(error);
+  }
+  loadingFinished();
+  return result;
+};
+
+export const sendEthSig = async (signedEthMessage) => {
+  const url = migration.eth_submission.url;
+  const payload = signedEthMessage;
+
+  let result = null;
 
   loadingStarted();
   try {
     console.log(url);
     console.log(JSON.stringify(payload));
 
-    const result = await axios.post(url, JSON.stringify(payload), {
+    result = await axios.post(url, JSON.stringify(payload), {
       headers: {
         'Content-Type': 'application/json',
       },
     });
     console.log(result);
-
-    loadingFinished();
-
-    return result;
   } catch (error) {
     console.error(error);
   }
-  return null;
+  loadingFinished();
+  return result;
 };
 
 export const transactions = (activePeer, address, limit = 20, offset = 0, orderBy = 'timestamp:desc') =>
