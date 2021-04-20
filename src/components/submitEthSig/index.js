@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 
 import { sent } from '../../actions/account';
-import BurnToWShift from './burnToWShift';
+import SubmitEthSig from './submitEthSig';
 
 const mapStateToProps = state => ({
   account: state.account,
@@ -13,4 +13,4 @@ const mapDispatchToProps = dispatch => ({
   sent: data => dispatch(sent(data)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate()(BurnToWShift));
+export default connect(mapStateToProps, mapDispatchToProps)(translate()(SubmitEthSig));

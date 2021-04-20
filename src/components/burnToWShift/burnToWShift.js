@@ -94,7 +94,7 @@ class BurnToWShift extends React.Component {
 
   send(event) {
     event.preventDefault();
-    this.props.sentMigration({
+    this.props.sent({
       activePeer: this.props.activePeer,
       account: this.props.account,
       recipientId: this.state.recipient.value,

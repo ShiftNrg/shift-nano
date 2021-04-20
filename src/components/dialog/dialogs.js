@@ -13,6 +13,7 @@ import EncryptMessage from '../encryptMessage';
 import DecryptMessage from '../decryptMessage';
 import BurnToWShift from '../burnToWShift';
 import BurnToSubstrate from '../burnToSubstrate';
+import SubmitEthSig from '../submitEthSig';
 
 export default () => ({
   send: {
@@ -62,6 +63,10 @@ export default () => ({
   'decrypt-message': {
     title: i18next.t('Decrypt message'),
     component: DecryptMessage,
+  },
+  'submit-ethSig': {
+    title: i18next.t('Submit-Eth-Sig'),
+    component: SubmitEthSig,
   },
   'burn-wshift': {
     title: i18next.t('Burn-to-wSHIFT'),

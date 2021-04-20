@@ -53,6 +53,10 @@ const Header = props => (
         </MenuItem>
         <MenuDivider />
         <MenuItem theme={styles}>
+          <RelativeLink className={`submit-ethSig ${styles.menuLink}`}
+            to='submit-ethSig'>{props.t('Submit-Eth-Sig')}</RelativeLink>
+        </MenuItem>
+        <MenuItem theme={styles}>
           <RelativeLink className={`burn-wshift ${styles.menuLink}`}
             to='burn-wshift'>{props.t('Migrate-to-wSHIFT')}</RelativeLink>
         </MenuItem>
