@@ -54,6 +54,11 @@ export const passphraseUsed = data => ({
   data,
 });
 
+export const messageSigned = data => ({
+  type: actionTypes.messageSigned,
+  data,
+});
+
 export const migrationSend = data => ({
   type: actionTypes.migrationSend,
   data,

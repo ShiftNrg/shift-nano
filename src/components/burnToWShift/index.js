@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 
-import { sent } from '../../actions/account';
+import { messageSigned, sent } from '../../actions/account';
 import BurnToWShift from './burnToWShift';
 
 const mapStateToProps = state => ({
@@ -11,6 +11,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   sent: data => dispatch(sent(data)),
+  messageSigned: data => dispatch(messageSigned(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(translate()(BurnToWShift));

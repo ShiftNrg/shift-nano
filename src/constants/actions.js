@@ -26,6 +26,7 @@ const actionTypes = {
   toastHidden: 'TOAST_HIDDEN',
   loadingStarted: 'LOADING_STARTED',
   loadingFinished: 'LOADING_FINISHED',
+  messageSigned: 'MESSAGE_SIGNED',
   migrationSend: 'MIGRATION_SEND',
   migrationSent: 'MIGRATION_SENT',
   migrationReceived: 'MIGRATION_RECEIVED',

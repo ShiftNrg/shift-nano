@@ -60,6 +60,8 @@ const account = (state = {}, action) => {
       return {
         afterLogout: true,
       };
+    case actionTypes.messageSigned:
+      return merge(state, action.data);
     case actionTypes.migrationSend:
       return {
         ...state,

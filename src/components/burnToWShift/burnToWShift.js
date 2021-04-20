@@ -122,6 +122,7 @@ class BurnToWShift extends React.Component {
 
     this.setState({ result, account });
     // console.log(result);
+    this.props.messageSigned(this.props.account);
     return result;
   }
 
