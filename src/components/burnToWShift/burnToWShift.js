@@ -102,7 +102,10 @@ class BurnToWShift extends React.Component {
       passphrase: this.state.passphrase.value,
       secondPassphrase: this.state.secondPassphrase.value,
     });
-    this.setState({ executed: true });
+
+    const account = this.props.account;
+    account.pendingShiftMigration = true;
+    this.setState({ executed: true, account });
   }
 
   sign(message) {
@@ -116,7 +119,6 @@ class BurnToWShift extends React.Component {
     const account = this.props.account;
     account.signedMessage = signedMessage;
     account.message = message;
-    account.pendingShiftMigration = true;
 
     this.setState({ result, account });
     // console.log(result);
@@ -125,12 +127,6 @@ class BurnToWShift extends React.Component {
 
   showResult() {
     this.sign(this.state.message.value);
-    // const copied = this.props.copyToClipboard(result, {
-    //   message: this.props.t('Press #{key} to copy'),
-    // });
-    // if (copied) {
-    //   this.props.successToast({ label: this.props.t('Result copied to clipboard') });
-    // }
   }
 
   getMaxAmount() {
