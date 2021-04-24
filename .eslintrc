@@ -21,6 +21,7 @@
   },
   "rules": {
     "func-names": "off",
+    "max-len": [ "warn", 120, 2 ],
     "global-require": "off",
     "new-cap": ["error", {
       "newIsCapExceptions": ["mnemonic"],
@@ -32,7 +33,6 @@
         "Before"
       ]
     }],
-
     "react/prop-types": "off",
     "no-plusplus": "off",
     "no-underscore-dangle": "off",

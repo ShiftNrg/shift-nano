@@ -98,13 +98,13 @@ describe('Register', () => {
   it('should call activePeerSet with custom node if network index is custom node and address is valid', () => {
     const props = wrapper.find('Passphrase').props();
 
-    loginData.returns({ address: '127.0.0.1:8080', networkIndex: networks.customNode.code });
+    loginData.returns({ address: '127.0.0.1:8090', networkIndex: networks.customNode.code });
 
     props.onPassGenerated('sample passphrase');
     expect(loginData).to.have.been.calledWith();
 
     const network = networks.customNode;
-    network.address = '127.0.0.1:8080';
+    network.address = '127.0.0.1:8090';
     expect(prop.activePeerSet).to.have.been.calledWith({
       network,
       passphrase: 'sample passphrase',

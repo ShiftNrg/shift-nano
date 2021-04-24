@@ -22,7 +22,7 @@ exports.config = {
 
   params: {
     screenshotFolder: 'e2e-test-screenshots',
-    baseURL: 'http://localhost:8080/',
+    baseURL: 'http://localhost:8090/',
     shiftCoreURL: 'http://localhost:9305',
     testnetPassphrase: process.env.TESTNET_PASSPHRASE,
     useTestnetPassphrase: false,

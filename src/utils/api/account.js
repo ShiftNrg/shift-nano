@@ -1,5 +1,10 @@
+/* eslint-disable no-console */
 import Lisk from 'shift-js';
 import { requestToActivePeer } from './peers';
+import migration from '../../constants/migration';
+import { loadingStarted, loadingFinished } from '../../utils/loading';
+
+const axios = require('axios');
 
 export const getAccount = (activePeer, address) =>
   new Promise((resolve, reject) => {
@@ -39,8 +44,7 @@ export const setSecondPassphrase = (activePeer, secondPassphrase, publicKey, pas
     publicKey,
   });
 
-export const send = (activePeer, recipientId, amount,
-  passphrase, secondPassphrase = null/* , data = null */) =>
+export const send = (activePeer, recipientId, amount, passphrase, secondPassphrase = null/* , data = null */) =>
   /*
   new Promise((resolve, reject) => {
     const transaction = Lisk.transaction
@@ -62,6 +66,60 @@ export const send = (activePeer, recipientId, amount,
     secret: passphrase,
     secondSecret: secondPassphrase,
   });
+
+// eslint-disable-next-line no-unused-vars
+export const sendMigration = async (ethAddress, publicKey, signature, txIds) => {
+  const url = migration.shift_submission.url;
+  const payload = migration.signedShiftMessage;
+
+  let result = null;
+
+  payload.signedMessage.message = ethAddress;
+  payload.signedMessage.publicKey = publicKey;
+  payload.signedMessage.signature = signature;
+  payload.txIds = [...txIds];
+
+  loadingStarted();
+  try {
+    // console.log(url);
+    // console.log(JSON.stringify(payload));
+
+    result = await axios.post(url, JSON.stringify(payload), {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    // console.log(result);
+  } catch (error) {
+    // console.error(error);
+  }
+  loadingFinished();
+  return result;
+};
+
+export const sendEthSig = async (signedEthMessage) => {
+  const url = migration.eth_submission.url;
+  const payload = signedEthMessage;
+
+  let result = null;
+
+  loadingStarted();
+  try {
+    console.log(url);
+    console.log(JSON.stringify(payload));
+
+    result = await axios.post(url, JSON.stringify(payload), {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log(result);
+  } catch (error) {
+    console.error(error);
+  }
+  loadingFinished();
+  return result;
+};
 
 export const transactions = (activePeer, address, limit = 20, offset = 0, orderBy = 'timestamp:desc') =>
   requestToActivePeer(activePeer, 'transactions', {

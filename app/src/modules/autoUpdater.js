@@ -51,6 +51,7 @@ export default ({ autoUpdater, dialog, win, process }) => {
           if (!updater.error) {
             dialog.showMessageBox({
               title: i18n.t('Dowload started'),
+              // eslint-disable-next-line max-len
               message: i18n.t('The download was started. Depending on your internet speed it can take up to several minutes. You will be informed when it is finished and prompted to restart the app.'),
             });
           }

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import i18next from 'i18next';
 import actionTypes from '../constants/actions';
 import { setSecondPassphrase, send } from '../utils/api/account';
@@ -8,6 +9,11 @@ import Fees from '../constants/fees';
 import { toRawLsk } from '../utils/lsk';
 import transactionTypes from '../constants/transactionTypes';
 import { loadingStarted, loadingFinished } from '../utils/loading';
+
+// eslint-disable-next-line no-unused-vars
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 /**
  * Trigger this action to update the account object
@@ -45,6 +51,31 @@ export const accountLoggedIn = data => ({
 
 export const passphraseUsed = data => ({
   type: actionTypes.passphraseUsed,
+  data,
+});
+
+export const messageSigned = data => ({
+  type: actionTypes.messageSigned,
+  data,
+});
+
+export const migrationSend = data => ({
+  type: actionTypes.migrationSend,
+  data,
+});
+
+export const migrationSent = data => ({
+  type: actionTypes.migrationSent,
+  data,
+});
+
+export const migrationReceived = data => ({
+  type: actionTypes.migrationReceived,
+  data,
+});
+
+export const migrationFailed = data => ({
+  type: actionTypes.migrationFailed,
   data,
 });
 
@@ -104,10 +135,9 @@ export const delegateRegistered = ({
   };
 
 /**
- *
+ * This is the default method used for sending SHIFT
  */
-export const sent = ({ activePeer, account, recipientId,
-  amount, passphrase, secondPassphrase/* , data */ }) =>
+export const sent = ({ activePeer, account, recipientId, amount, passphrase, secondPassphrase/* , data */ }) =>
   (dispatch) => {
     loadingStarted('sent');
     send(activePeer, recipientId, toRawLsk(amount), passphrase, secondPassphrase/* , data */)

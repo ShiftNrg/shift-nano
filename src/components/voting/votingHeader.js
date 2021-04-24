@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React from 'react';
 import grid from 'flexboxgrid/dist/flexboxgrid.css';
 import { IconMenu, MenuItem } from 'react-toolbox/lib/menu';

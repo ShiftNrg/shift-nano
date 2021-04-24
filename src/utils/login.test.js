@@ -3,7 +3,7 @@ import { validateUrl } from './login';
 
 describe('validateUrl', () => {
   it('should set address and addressValidity="" for a valid address', () => {
-    const validURL = 'http://localhost:8080';
+    const validURL = 'http://localhost:8090';
     const data = validateUrl(validURL);
     const expectedData = {
       address: validURL,
@@ -13,7 +13,7 @@ describe('validateUrl', () => {
   });
 
   it('should set address and addressValidity correctly event without http', () => {
-    const validURL = '127.0.0.1:8080';
+    const validURL = '127.0.0.1:8090';
     const data = validateUrl(validURL);
     const expectedData = {
       address: validURL,
@@ -23,7 +23,7 @@ describe('validateUrl', () => {
   });
 
   it('should set address and addressValidity="URL is invalid" for a valid address', () => {
-    const validURL = 'http:localhost:8080';
+    const validURL = 'http:localhost:8090';
     const data = validateUrl(validURL);
     const expectedData = {
       address: validURL,

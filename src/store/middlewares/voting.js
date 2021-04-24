@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import i18next from 'i18next';
 
 import { errorToastDisplayed } from '../../actions/toaster';

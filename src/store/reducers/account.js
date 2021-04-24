@@ -60,6 +60,21 @@ const account = (state = {}, action) => {
       return {
         afterLogout: true,
       };
+    case actionTypes.messageSigned:
+      return merge(state, action.data);
+    case actionTypes.migrationSend:
+      return {
+        ...state,
+        migrationTxIds: action.data.migrationTxIds ? action.data.migrationTxIds : 0,
+      };
+    case actionTypes.migrationSent:
+      return {
+        ...state,
+        pendingShiftMigration: false,
+        migrationTxIds: null,
+        signedMessage: null,
+        message: null,
+      };
     default:
       return state;
   }

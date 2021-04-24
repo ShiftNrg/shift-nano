@@ -1,9 +1,5 @@
 import { errorAlertDialogDisplayed } from './dialog';
-import {
-  listAccountDelegates,
-  listDelegates,
-  vote,
-} from '../utils/api/delegate';
+import { listAccountDelegates, listDelegates, vote } from '../utils/api/delegate';
 import { passphraseUsed } from './account';
 import { transactionAdded } from './transactions';
 import Fees from '../constants/fees';

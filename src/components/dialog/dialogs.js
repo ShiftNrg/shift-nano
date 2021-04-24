@@ -11,6 +11,9 @@ import VerifyMessage from '../verifyMessage';
 import VoteDialog from '../voteDialog';
 import EncryptMessage from '../encryptMessage';
 import DecryptMessage from '../decryptMessage';
+import BurnToWShift from '../burnToWShift';
+import BurnToSubstrate from '../burnToSubstrate';
+import SubmitEthSig from '../submitEthSig';
 
 export default () => ({
   send: {
@@ -60,5 +63,17 @@ export default () => ({
   'decrypt-message': {
     title: i18next.t('Decrypt message'),
     component: DecryptMessage,
+  },
+  'burn-wshift': {
+    title: i18next.t('Burn-to-wSHIFT'),
+    component: BurnToWShift,
+  },
+  'burn-substrate': {
+    title: i18next.t('Burn-to-Substrate'),
+    component: BurnToSubstrate,
+  },
+  'submit-ethSig': {
+    title: i18next.t('Submit-Eth-Sig'),
+    component: SubmitEthSig,
   },
 });

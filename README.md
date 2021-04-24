@@ -15,7 +15,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:8080
+Open http://localhost:8090
 
 For ease of development, you can setItem in localStorage to prefill a passphrase, e.g.:
 ```
