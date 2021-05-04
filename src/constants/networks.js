@@ -3,13 +3,13 @@ module.exports = {
     name: 'Mainnet',
     // ssl: true,
     // port: 443,
-    address: 'http://18.222.25.46:9305',
+    address: 'https://wallet.shiftnrg.org',
     code: 0,
   },
   testnet: { // network name translation t('Testnet');
     name: 'Testnet',
     testnet: true,
-    address: 'http://3.1.196.88:9405',
+    address: 'https://testnet.shiftnrg.org',
     code: 1,
   },
   customNode: { // network name translation t('Custom Node');
