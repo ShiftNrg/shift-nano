@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 
-import { messageSigned, sent } from '../../actions/account';
+import { messageSigned, submitMigration } from '../../actions/account';
 import MigrateToWShift from './migrateToWShift';
 
 const mapStateToProps = state => ({
@@ -10,7 +10,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  sent: data => dispatch(sent(data)),
+  submitMigration: data => dispatch(submitMigration(data)),
   messageSigned: data => dispatch(messageSigned(data)),
 });
 

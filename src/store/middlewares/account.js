@@ -2,7 +2,7 @@ import i18next from 'i18next';
 import { successAlertDialogDisplayed } from '../../actions/dialog';
 import { getAccount, transactions as getTransactions, sendMigration } from '../../utils/api/account';
 // eslint-disable-next-line max-len
-import { accountUpdated, accountLoggedIn, migrationSend, migrationSent, migrationReceived, migrationFailed } from '../../actions/account';
+import { accountUpdated, accountLoggedIn, migrationSent, migrationReceived, migrationFailed } from '../../actions/account';
 import { transactionsUpdated } from '../../actions/transactions';
 import { activePeerUpdate } from '../../actions/peers';
 import { votesFetched } from '../../actions/voting';
@@ -23,30 +23,6 @@ const updateTransactions = (store, peers, account) => {
         confirmed: response.transactions,
         count: parseInt(response.count, 10),
       }));
-    })
-    .then(() => {
-      // check for pending shift migration burn tx
-      if (account.pendingShiftMigration) {
-        const state = store.getState();
-        const { transactions } = state;
-
-        // might have to loop through last 5-10 tx and send any tx id that match
-        console.log(JSON.stringify(transactions.confirmed[0]));
-        // const burnedTx = transactions.confirmed[0];
-        const txIds = [];
-
-        for (let i = 10; i >= 0; i--) {
-          if (transactions.confirmed[i]) {
-            const burnedTx = transactions.confirmed[i];
-            if (burnedTx.recipientId === '18446744073709551616S') {
-              txIds.push(burnedTx.id);
-              console.log(`tx id from account middleware: ${burnedTx.id}`);
-            }
-          }
-        }
-        store.dispatch(migrationSend({ migrationTxIds: txIds })); // dispatch event w/ new data for new state
-        // store.dispatch(EVENT(data)); // dispatch event w/ new data for new state
-      }
     });
 };
 
@@ -132,11 +108,9 @@ const passphraseUsed = (store, action) => {
 const submitBurnedMigration = async (store, action) => {
   const { account } = store.getState();
 
-  const txIds = account.migrationTxIds;
-  // console.log(JSON.stringify(txId));
   store.dispatch(migrationSent());
 
-  sendMigration(account.message, account.publicKey, account.signedMessage, txIds)
+  sendMigration(account.message, account.publicKey, account.signedMessage /* , txIds */)
     .then((result) => {
       store.dispatch(migrationReceived());
       // eslint-disable-next-line no-console

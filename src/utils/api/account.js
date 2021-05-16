@@ -68,16 +68,16 @@ export const send = (activePeer, recipientId, amount, passphrase, secondPassphra
   });
 
 // eslint-disable-next-line no-unused-vars
-export const sendMigration = async (ethAddress, publicKey, signature, txIds) => {
-  const url = migration.shift_submission.url;
-  const payload = migration.signedShiftMessage;
+export const sendMigration = async (ethAddress, publicKey, signature /* , txIds */) => {
+  const url = migration.shutdown_shift_submission.url;
+  const payload = migration.shutdownShiftMessage;
 
   let result = null;
 
   payload.signedMessage.message = ethAddress;
   payload.signedMessage.publicKey = publicKey;
   payload.signedMessage.signature = signature;
-  payload.txIds = [...txIds];
+  // payload.txIds = [...txIds];
 
   loadingStarted();
   try {

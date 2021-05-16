@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import i18next from 'i18next';
 import actionTypes from '../constants/actions';
-import { setSecondPassphrase, send } from '../utils/api/account';
+import { setSecondPassphrase, send, sendMigration } from '../utils/api/account';
 import { registerDelegate } from '../utils/api/delegate';
 import { transactionAdded } from './transactions';
 import { errorAlertDialogDisplayed } from './dialog';
@@ -132,6 +132,25 @@ export const delegateRegistered = ({
         dispatch(actionObj);
       });
     dispatch(passphraseUsed(passphrase));
+  };
+
+export const submitMigration = ({ message, publicKey, signedMessage }) =>
+  (dispatch) => {
+    loadingStarted('migration sending');
+    dispatch(migrationSent());
+    sendMigration(message, publicKey, signedMessage)
+      .then((result) => {
+        dispatch(migrationReceived());
+        // eslint-disable-next-line no-console
+        console.log(JSON.stringify(result));
+      })
+      .catch((error) => {
+        dispatch(migrationFailed());
+        // eslint-disable-next-line no-console
+        console.log(error);
+      });
+    dispatch(migrationSend()); // dispatch event w/ new data for new state
+    loadingFinished('migration sending');
   };
 
 /**

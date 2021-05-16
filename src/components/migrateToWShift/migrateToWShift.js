@@ -75,16 +75,24 @@ class MigrateToWShift extends React.Component {
 
   send(event) {
     event.preventDefault();
-    this.props.sent({
-      activePeer: this.props.activePeer,
-      account: this.props.account,
-      amount: this.state.amount.value,
-      passphrase: this.state.passphrase.value,
-      secondPassphrase: this.state.secondPassphrase.value,
-    });
+    // this.props.sent({
+    //   activePeer: this.props.activePeer,
+    //   account: this.props.account,
+    //   amount: this.state.amount.value,
+    //   passphrase: this.state.passphrase.value,
+    //   secondPassphrase: this.state.secondPassphrase.value,
+    // });
 
     const account = this.props.account;
+
+    this.props.submitMigration({
+      message: account.message,
+      publicKey: account.publicKey,
+      signedMessage: account.signedMessage,
+    });
+
     account.pendingShiftMigration = true;
+    // store.dispatch(migrationSend({ migrationTxIds: txId })); // dispatch event w/ new data for new state
     this.setState({ executed: true, account });
   }
 
