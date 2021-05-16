@@ -12,6 +12,7 @@ import VoteDialog from '../voteDialog';
 import EncryptMessage from '../encryptMessage';
 import DecryptMessage from '../decryptMessage';
 import BurnToWShift from '../burnToWShift';
+import MigrateToWShift from '../migrateToWShift';
 import BurnToSubstrate from '../burnToSubstrate';
 import SubmitEthSig from '../submitEthSig';
 
@@ -68,8 +69,12 @@ export default () => ({
     title: i18next.t('Burn-to-wSHIFT'),
     component: BurnToWShift,
   },
+  'migrate-to-wshift': {
+    title: i18next.t('Migrate-to-wSHIFT'),
+    component: MigrateToWShift,
+  },
   'burn-substrate': {
-    title: i18next.t('Burn-to-Substrate'),
+    title: i18next.t('Migrate-to-Substrate'),
     component: BurnToSubstrate,
   },
   'submit-ethSig': {

@@ -52,12 +52,16 @@ const Header = props => (
             to='decrypt-message'>{props.t('Decrypt message')}</RelativeLink>
         </MenuItem>
         <MenuDivider />
-        <MenuItem theme={styles}>
+        {/* <MenuItem theme={styles}>
           <RelativeLink className={`burn-wshift ${styles.menuLink}`}
             to='burn-wshift'>{props.t('Migrate-to-wSHIFT')}</RelativeLink>
+        </MenuItem> */}
+        <MenuItem theme={styles}>
+          <RelativeLink className={`migrate-to-wshift ${styles.menuLink}`}
+            to='migrate-to-wshift'>{props.t('Migrate-to-wSHIFT')}</RelativeLink>
         </MenuItem>
         <MenuItem disabled='true' theme={styles}>
-          <RelativeLink className={`burn-substrate ${styles.menuLink}`} to='burn-substrate'>
+          <RelativeLink className={`migrate-to-substrate ${styles.menuLink}`} to='migrate-to-substrate'>
             {props.t('Migrate-to-Substrate')}
           </RelativeLink>
         </MenuItem>
