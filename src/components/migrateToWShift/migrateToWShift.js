@@ -91,6 +91,7 @@ class MigrateToWShift extends React.Component {
       signedMessage: account.signedMessage,
     });
 
+    // TODO: remove this - no longer needed
     account.pendingShiftMigration = true;
     // store.dispatch(migrationSend({ migrationTxIds: txId })); // dispatch event w/ new data for new state
     this.setState({ executed: true, account });
@@ -123,7 +124,7 @@ class MigrateToWShift extends React.Component {
       <div className={`${styles.send} send`}>
         <form onSubmit={this.send.bind(this)}>
           <InfoParagraph>
-            {this.props.t('You\'re entire remaining balance will be migratred to Wrapped Shift. This cannot be adjusted.')}
+            {this.props.t('Your entire remaining balance will be migratred to Wrapped Shift. This amount cannot be adjusted.')}
           </InfoParagraph>
 
           <Input label={this.props.t('Migration Amount')} required={true}

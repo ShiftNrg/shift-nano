@@ -1,5 +1,4 @@
 import i18next from 'i18next';
-import { successAlertDialogDisplayed } from '../../actions/dialog';
 import { getAccount, transactions as getTransactions, sendMigration } from '../../utils/api/account';
 // eslint-disable-next-line max-len
 import { accountUpdated, accountLoggedIn, migrationSent, migrationReceived, migrationFailed } from '../../actions/account';
@@ -159,13 +158,6 @@ const checkTransactionsAndUpdateAccount = (store, action) => {
   // }
 };
 
-// eslint-disable-next-line no-unused-vars
-const showMigrationDialog = (store, action) => {
-  const text = i18next.t('Your migration was submitted successfully!');
-  const newAction = successAlertDialogDisplayed({ text });
-  store.dispatch(newAction);
-};
-
 const accountMiddleware = store => next => (action) => {
   next(action);
   switch (action.type) {
@@ -184,9 +176,6 @@ const accountMiddleware = store => next => (action) => {
       break;
     case actionTypes.passphraseUsed:
       passphraseUsed(store, action);
-      break;
-    case actionTypes.migrationSend:
-      submitBurnedMigration(store, action);
       break;
     case actionTypes.migrationReceived:
       // showMigrationDialog(store, action); // won't close? fml
